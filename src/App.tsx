@@ -5,7 +5,14 @@ import TaskList from "./TaskList";
 import dayjs from "dayjs";
 
 function App() {
-  const [tasks, setTasks] = useState(getTasks())
+  const [tasks, setTasks] = useState<any[]>(getTasks())
+
+  const addTask = () => {
+    setTasks((prevTasks) => {
+      const new_id = prevTasks.reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
+      return prevTasks.concat([{ id: new_id, name: `タスク${new_id}`, start_date: null, end_date: null }])
+    })
+  }
 
   const deleteTask = (id: any) => {
     setTasks((prevTasks) => {
@@ -23,6 +30,7 @@ function App() {
         TaskList
       </div>
       <TaskList tasks={tasks} deleteTask={deleteTask} />
+      <button onClick={addTask}>追加</button>
     </>
   );
 }

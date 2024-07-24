@@ -19,8 +19,8 @@ const TaskList: FC<Props> = (props) => {
                 tasks.flatMap((task) =>
                     <>
                         <div className="border border-gray-400 h-5" contentEditable={true}>{task.name}</div>
-                        <div className="border border-gray-400 h-5" contentEditable={true}>{task.start_date.format("YYYY-MM-DD HH:mm:ss")}</div>
-                        <div className="border border-gray-400 h-5" contentEditable={true}>{task.end_date.format("YYYY-MM-DD HH:mm:ss")}</div>
+                        <div className="border border-gray-400 h-5" contentEditable={true}>{task.start_date?.format("YYYY-MM-DD HH:mm:ss") ?? ''}</div>
+                        <div className="border border-gray-400 h-5" contentEditable={true}>{task.end_date?.format("YYYY-MM-DD HH:mm:ss") ?? ''}</div>
                         <div className="bg-red-500 border border-gray-400 cursor-pointer h-5" onClick={() => deleteTask(task.id)}></div>
                     </>
                 )

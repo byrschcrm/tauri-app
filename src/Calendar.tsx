@@ -33,7 +33,7 @@ const Calendar: FC<Props> = (props) => {
                     { from_date: '2024-07-21 12:00:00', to_date: '2024-07-21 12:30:00' },
                     { from_date: '2024-07-21 12:30:00', to_date: '2024-07-21 13:00:00' },
                     { from_date: '2024-07-21 13:00:00', to_date: '2024-07-21 13:30:00' },
-                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date.isSameOrBefore(dayjs(dates.from_date)) && task.end_date.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
+                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date?.isSameOrBefore(dayjs(dates.from_date)) && task.end_date?.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
             }
 
             <div className="border border-gray-400 h-5 text-center">2024.07.22(月)</div>
@@ -48,7 +48,7 @@ const Calendar: FC<Props> = (props) => {
                     { from_date: '2024-07-22 12:00:00', to_date: '2024-07-22 12:30:00' },
                     { from_date: '2024-07-22 12:30:00', to_date: '2024-07-22 13:00:00' },
                     { from_date: '2024-07-22 13:00:00', to_date: '2024-07-22 13:30:00' },
-                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date.isSameOrBefore(dayjs(dates.from_date)) && task.end_date.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
+                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date?.isSameOrBefore(dayjs(dates.from_date)) && task.end_date?.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
             }
 
             <div className="border border-gray-400 h-5 text-center">2024.07.23(火)</div>
@@ -63,7 +63,7 @@ const Calendar: FC<Props> = (props) => {
                     { from_date: '2024-07-23 12:00:00', to_date: '2024-07-23 12:30:00' },
                     { from_date: '2024-07-23 12:30:00', to_date: '2024-07-23 13:00:00' },
                     { from_date: '2024-07-23 13:00:00', to_date: '2024-07-23 13:30:00' },
-                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date.isSameOrBefore(dayjs(dates.from_date)) && task.end_date.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
+                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date?.isSameOrBefore(dayjs(dates.from_date)) && task.end_date?.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
             }
 
             <div className="border border-gray-400 h-5 text-center">2024.07.24(水)</div>
@@ -78,7 +78,7 @@ const Calendar: FC<Props> = (props) => {
                     { from_date: '2024-07-24 12:00:00', to_date: '2024-07-24 12:30:00' },
                     { from_date: '2024-07-24 12:30:00', to_date: '2024-07-24 13:00:00' },
                     { from_date: '2024-07-24 13:00:00', to_date: '2024-07-24 13:30:00' },
-                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date.isSameOrBefore(dayjs(dates.from_date)) && task.end_date.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
+                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date?.isSameOrBefore(dayjs(dates.from_date)) && task.end_date?.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
             }
 
             <div className="border border-gray-400 h-5 text-center">2024.07.25(木)</div>
@@ -93,7 +93,7 @@ const Calendar: FC<Props> = (props) => {
                     { from_date: '2024-07-25 12:00:00', to_date: '2024-07-25 12:30:00' },
                     { from_date: '2024-07-25 12:30:00', to_date: '2024-07-25 13:00:00' },
                     { from_date: '2024-07-25 13:00:00', to_date: '2024-07-25 13:30:00' },
-                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date.isSameOrBefore(dayjs(dates.from_date)) && task.end_date.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
+                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date?.isSameOrBefore(dayjs(dates.from_date)) && task.end_date?.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
             }
 
             <div className="border border-gray-400 h-5 text-center">2024.07.26(金)</div>
@@ -108,7 +108,7 @@ const Calendar: FC<Props> = (props) => {
                     { from_date: '2024-07-26 12:00:00', to_date: '2024-07-26 12:30:00' },
                     { from_date: '2024-07-26 12:30:00', to_date: '2024-07-26 13:00:00' },
                     { from_date: '2024-07-26 13:00:00', to_date: '2024-07-26 13:30:00' },
-                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date.isSameOrBefore(dayjs(dates.from_date)) && task.end_date.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
+                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date?.isSameOrBefore(dayjs(dates.from_date)) && task.end_date?.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
             }
 
             <div className="border border-gray-400 h-5 text-center">2024.07.27(土)</div>
@@ -123,7 +123,7 @@ const Calendar: FC<Props> = (props) => {
                     { from_date: '2024-07-27 12:00:00', to_date: '2024-07-27 12:30:00' },
                     { from_date: '2024-07-27 12:30:00', to_date: '2024-07-27 13:00:00' },
                     { from_date: '2024-07-27 13:00:00', to_date: '2024-07-27 13:30:00' },
-                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date.isSameOrBefore(dayjs(dates.from_date)) && task.end_date.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
+                ].map((dates) => <div className={`border border-gray-400 h-5 ${tasks.some((task) => task.start_date?.isSameOrBefore(dayjs(dates.from_date)) && task.end_date?.isSameOrAfter(dayjs(dates.to_date))) ? 'bg-teal-500' : ''}`}></div>)
             }
         </div>
     )
