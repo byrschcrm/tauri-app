@@ -3,7 +3,6 @@ import { FC } from 'react';
 
 type Props = {
     tasks: any[]
-    isEditable: boolean
 }
 
 const TaskList: FC<Props> = (props) => {
