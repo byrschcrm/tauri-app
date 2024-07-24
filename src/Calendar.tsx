@@ -18,37 +18,27 @@ const Grid: FC<Props> = () => {
             <div className="border border-gray-400 h-5 text-center">2024.07.27(土)</div>
             {
                 (new Array(7)).fill(undefined).map((_) =>
-                    <div className="border border-gray-400 h-5">
-
-                    </div>)
+                    <div className="border border-gray-400 h-5"></div>)
             }
             <div className="flex h-10 items-center justify-end row-span-2 text-right">10:00</div>
             {
                 (new Array(14)).fill(undefined).map((_) =>
-                    <div className="border border-gray-400 h-5">
-
-                    </div>)
+                    <div className="border border-gray-400 h-5"></div>)
             }
             <div className="flex h-10 items-center justify-end row-span-2 text-right">11:00</div>
             {
                 (new Array(14)).fill(undefined).map((_) =>
-                    <div className="border border-gray-400 h-5">
-
-                    </div>)
+                    <div className="border border-gray-400 h-5"></div>)
             }
             <div className="flex h-10 items-center justify-end row-span-2 text-right">12:00</div>
             {
                 (new Array(14)).fill(undefined).map((_) =>
-                    <div className="border border-gray-400 h-5">
-
-                    </div>)
+                    <div className="border border-gray-400 h-5"></div>)
             }
             <div className="flex h-10 items-center justify-end row-span-2 text-right">13:00</div>
             {
                 (new Array(14)).fill(undefined).map((_) =>
-                    <div className="border border-gray-400 h-5">
-
-                    </div>)
+                    <div className="border border-gray-400 h-5"></div>)
             }
         </div>
     )

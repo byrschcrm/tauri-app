@@ -2,12 +2,12 @@ import "./App.css";
 import { FC } from 'react';
 
 type Props = {
-    data: any[]
+    tasks: any[]
     isEditable: boolean
 }
 
 const TaskList: FC<Props> = (props) => {
-    const { data } = props
+    const { tasks } = props
 
     return (
         <div className="grid grid-cols-3">
@@ -15,11 +15,11 @@ const TaskList: FC<Props> = (props) => {
             <div className="border border-gray-400 h-5 text-center">開始時刻</div>
             <div className="border border-gray-400 h-5 text-center">終了時刻</div>
             {
-                data.flatMap((d) =>
+                tasks.flatMap((t) =>
                     <>
-                        <div className="border border-gray-400 h-5" contentEditable={true}>{d.name}</div>
-                        <div className="border border-gray-400 h-5" contentEditable={true}>{d.start_date}</div>
-                        <div className="border border-gray-400 h-5" contentEditable={true}>{d.end_date}</div>
+                        <div className="border border-gray-400 h-5" contentEditable={true}>{t.name}</div>
+                        <div className="border border-gray-400 h-5" contentEditable={true}>{t.start_date}</div>
+                        <div className="border border-gray-400 h-5" contentEditable={true}>{t.end_date}</div>
                     </>
                 )
             }
