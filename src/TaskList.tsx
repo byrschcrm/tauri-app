@@ -18,8 +18,8 @@ const TaskList: FC<Props> = (props) => {
                 tasks.flatMap((t) =>
                     <>
                         <div className="border border-gray-400 h-5" contentEditable={true}>{t.name}</div>
-                        <div className="border border-gray-400 h-5" contentEditable={true}>{t.start_date}</div>
-                        <div className="border border-gray-400 h-5" contentEditable={true}>{t.end_date}</div>
+                        <div className="border border-gray-400 h-5" contentEditable={true}>{t.start_date.format("YYYY-MM-DD HH:mm:ss")}</div>
+                        <div className="border border-gray-400 h-5" contentEditable={true}>{t.end_date.format("YYYY-MM-DD HH:mm:ss")}</div>
                     </>
                 )
             }
