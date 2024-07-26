@@ -46,29 +46,32 @@ const Calendar: FC<Props> = (props) => {
 }
 
 const createCellElements = (tasks: any[], dateRanges: any) => {
-    const cell_ids = dateRanges.map((dateRange: any, idx: number) => tasks.find((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))?.id ?? -idx)
+    const cellTasks = dateRanges.map((dateRange: any, idx: number) => {
+        const task = tasks.find((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
+        return task ?? { id: -idx, name: '', start_date: null, end_date: null }
+    })
 
-    const row_spans: any[] = []
-    let prev_id = 0
+    const cellTasksWithSpan: any[] = []
+    let prevTask = null
     let cur_row_span = 0
-    for (let i = 0; i < cell_ids.length; i++) {
-        const cell_id = cell_ids[i]
+    for (let i = 0; i < cellTasks.length; i++) {
+        const cellTask = cellTasks[i]
         if (i === 0) {
-            prev_id = cell_id
-            cur_row_span = cell_id > 0 ? 1 : 0
-        } else if (cell_id === prev_id) {
+            prevTask = cellTask
+            cur_row_span = cellTask.id > 0 ? 1 : 0
+        } else if (cellTask.id === prevTask.id) {
             cur_row_span += 1
         } else {
-            row_spans.push(cur_row_span)
-            prev_id = cell_id
-            cur_row_span = cell_id > 0 ? 1 : 0
+            cellTasksWithSpan.push({ ...prevTask, row_span: cur_row_span })
+            prevTask = cellTask
+            cur_row_span = cellTask.id > 0 ? 1 : 0
         }
-        if (i === cell_ids.length - 1) {
-            row_spans.push(cur_row_span)
+        if (i === cellTasks.length - 1) {
+            cellTasksWithSpan.push({ ...prevTask, row_span: cur_row_span })
         }
     }
 
-    return row_spans.map((e) => <div className={`border border-gray-400 ${e > 0 ? `${getRowSpan(e)} bg-teal-500` : ''}`}></div>)
+    return cellTasksWithSpan.map((t) => <div className={`border border-gray-400 flex items-center justify-center ${t.row_span > 0 ? `${getRowSpan(t.row_span)} bg-teal-500` : ''}`}>{t.name}</div>)
 }
 
 const createDateRanges = (ymd: string) => {
