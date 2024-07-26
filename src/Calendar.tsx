@@ -71,7 +71,7 @@ const createCellElements = (tasks: any[], dateRanges: any) => {
         }
     }
 
-    return cellTasksWithSpan.map((t) => <div className={`border border-gray-400 flex items-center justify-center ${t.row_span > 0 ? `${getRowSpan(t.row_span)} bg-teal-500` : ''}`}>{t.name}</div>)
+    return cellTasksWithSpan.map((t) => <div className={`border border-gray-400 flex items-center justify-center ${t.row_span > 0 ? `${getRowSpan(t.row_span)} bg-teal-500` : ''}`} draggable={t.row_span > 0}>{t.name}</div>)
 }
 
 const createDateRanges = (ymd: string) => {
