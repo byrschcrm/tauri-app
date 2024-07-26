@@ -19,6 +19,10 @@ const Calendar: FC<Props> = (props) => {
         setDebug(JSON.stringify({ no, span, height, y, start_no }))
     }
 
+    const funcB = (no: any) => {
+        setDebug(JSON.stringify({ no }))
+    }
+
     return (
         <div className="grid grid-flow-col grid-rows-10">
             <div className="flex items-center justify-end row-span-2 text-right">09:00</div>
@@ -28,25 +32,25 @@ const Calendar: FC<Props> = (props) => {
             <div className="flex items-center justify-end row-span-2 text-right">13:00</div>
 
             <div className="border border-gray-400 text-center">2024.07.21(日)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, funcA)}
+            {createCellElements2(tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, funcA, funcB)}
 
             <div className="border border-gray-400 text-center">2024.07.22(月)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, funcA)}
+            {createCellElements2(tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, funcA, funcB)}
 
             <div className="border border-gray-400 text-center">2024.07.23(火)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, funcA)}
+            {createCellElements2(tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, funcA, funcB)}
 
             <div className="border border-gray-400 text-center">2024.07.24(水)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, funcA)}
+            {createCellElements2(tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, funcA, funcB)}
 
             <div className="border border-gray-400 text-center">2024.07.25(木)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, funcA)}
+            {createCellElements2(tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, funcA, funcB)}
 
             <div className="border border-gray-400 text-center">2024.07.26(金)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, funcA)}
+            {createCellElements2(tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, funcA, funcB)}
 
             <div className="border border-gray-400 text-center">2024.07.27(土)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, funcA)}
+            {createCellElements2(tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, funcA, funcB)}
         </div>
     )
 }
@@ -88,7 +92,7 @@ const Calendar: FC<Props> = (props) => {
 //     )
 // }
 
-const createCellElements2 = (tasks: any[], dateRanges: any, start_no: number, funcA: any) => {
+const createCellElements2 = (tasks: any[], dateRanges: any, start_no: number, funcA: any, funcB: any) => {
     // task1, null, null, task2, task2, null, ...
     const aaa = dateRanges.map((dateRange: any) => {
         return tasks.find((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to)) ?? null
@@ -128,7 +132,9 @@ const createCellElements2 = (tasks: any[], dateRanges: any, start_no: number, fu
         <div
             className={`border border-gray-400 flex items-center justify-center ${getRowSpan(c.span)} ${c.task ? 'bg-teal-500' : ''}`}
             draggable={c.task !== null}
+            onDragOver={(e) => e.preventDefault()}
             onDragStart={(e) => funcA(c.no, c.span, e.currentTarget.clientHeight, e.nativeEvent.offsetY)}
+            onDrop={(e) => c.task === null && funcB(c.no)}
         >
             {c.task?.name}
         </div>
