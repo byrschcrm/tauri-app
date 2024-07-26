@@ -20,7 +20,9 @@ const TaskList: FC<Props> = (props) => {
             {
                 tasks.flatMap((task) =>
                     <>
-                        <div className="border border-gray-400" contentEditable={true}>{task.name}</div>
+                        <div className="border border-gray-400">
+                            <input className="p-0" value={task.name} onChange={(e) => updateTask({ id: task.id, name: e.target.value })} />
+                        </div>
                         <div className="border border-gray-400">
                             <select onChange={(e) => updateTask({ id: task.id, start_date: dayjs(e.target.value) })}>{createDateOptions(task.start_date)}</select>
                         </div>
