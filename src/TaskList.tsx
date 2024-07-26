@@ -1,13 +1,15 @@
 import "./App.css";
 import { FC } from 'react';
+import dayjs from "dayjs";
 
 type Props = {
     tasks: any[]
+    updateTask: any
     deleteTask: any
 }
 
 const TaskList: FC<Props> = (props) => {
-    const { tasks, deleteTask } = props
+    const { tasks, updateTask, deleteTask } = props
 
     return (
         <div className="grid grid-cols-4">
@@ -19,11 +21,11 @@ const TaskList: FC<Props> = (props) => {
                 tasks.flatMap((task) =>
                     <>
                         <div className="border border-gray-400" contentEditable={true}>{task.name}</div>
-                        <div className="border border-gray-400" contentEditable={true}>
-                            <select>{createDateOptions(task.start_date)}</select>
+                        <div className="border border-gray-400">
+                            <select onChange={(e) => updateTask({ id: task.id, start_date: dayjs(e.target.value) })}>{createDateOptions(task.start_date)}</select>
                         </div>
-                        <div className="border border-gray-400" contentEditable={true}>
-                            <select>{createDateOptions(task.end_date)}</select>
+                        <div className="border border-gray-400">
+                            <select onChange={(e) => updateTask({ id: task.id, end_date: dayjs(e.target.value) })}>{createDateOptions(task.end_date)}</select>
                         </div>
                         <div className="bg-red-500 border border-gray-400 cursor-pointer" onClick={() => deleteTask(task.id)}></div>
                     </>
@@ -33,7 +35,7 @@ const TaskList: FC<Props> = (props) => {
     )
 }
 
-const createDateOptions = (date: any) => [<option></option>].concat(createYmdPatterns().flatMap((ymd) => createHmsPatterns().map((hms) => <option selected={date.isSame(`${ymd}${hms}`)}>{`${ymd} ${hms}`}</option>)))
+const createDateOptions = (date: any) => [<option key="empty"></option>].concat(createYmdPatterns().flatMap((ymd) => createHmsPatterns().map((hms) => <option key={`${ymd}${hms}`} selected={date.isSame(`${ymd}${hms}`)}>{`${ymd} ${hms}`}</option>)))
 
 const createYmdPatterns = () => {
     return [

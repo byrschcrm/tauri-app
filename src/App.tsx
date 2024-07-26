@@ -14,6 +14,12 @@ function App() {
     })
   }
 
+  const updateTask = (partTask: any) => {
+    setTasks((prevTasks) => {
+      return prevTasks.map((task) => task.id === partTask.id ? { ...task, ...partTask } : task)
+    })
+  }
+
   const deleteTask = (id: any) => {
     setTasks((prevTasks) => {
       return prevTasks.filter((task) => task.id !== id)
@@ -29,7 +35,7 @@ function App() {
       <div >
         TaskList
       </div>
-      <TaskList tasks={tasks} deleteTask={deleteTask} />
+      <TaskList tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} />
       <button onClick={addTask}>追加</button>
     </>
   );
