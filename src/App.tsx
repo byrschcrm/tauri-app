@@ -26,17 +26,22 @@ function App() {
     })
   }
 
+  const [debug, setDebug] = useState<any>(null)
+
   return (
     <>
-      <div >
+      <div>
         Calendar
       </div>
-      <Calendar tasks={tasks} />
-      <div >
+      <Calendar tasks={tasks} setDebug={setDebug} />
+      <div>
         TaskList
       </div>
       <TaskList tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} />
       <button onClick={addTask}>追加</button>
+      <div>
+        Debug: {debug}
+      </div>
     </>
   );
 }
