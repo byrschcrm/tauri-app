@@ -24,6 +24,7 @@ const Calendar: FC<Props> = (props) => {
     const funcA = (e: any, task: any, no: any, span: any) => {
         const start_no = no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / span))
         e.dataTransfer.setData('text', JSON.stringify({ task, start_no }))
+        setDebug(JSON.stringify({ no, span, start_no }))
     }
 
     const funcB = (e: any, no: any, span: any) => {
@@ -188,9 +189,12 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, f
             const row_span = bbb.length
             const tasks = Array.from((new Map(bbb.flat().map((b) => [b.id, b]))).values())
             const hhh = [...Array(cols)].map((_) => new Set<number>([]))
-            const lower_date = bbb[0][0].start_date
+            // const lower_date = bbb[0][0].start_date
+            const lower_date = dateRanges[0].from
             const upper_date = bbb[bbb.length - 1][0].end_date
-            const end_no = start_no + upper_date.diff(lower_date, 'm') / 30
+            // const end_no = start_no + upper_date.diff(lower_date, 'm') / 30
+            const end_no = start_no + upper_date.diff(lower_date, 'm') / 30 - 1
+            const start_no2 = start_no + bbb[0][0].start_date.diff(lower_date, 'm') / 30
             const xxx = tasks.map((task) => {
                 const cur_no = start_no + task.start_date.diff(lower_date, 'm') / 30
                 const cur_no2 = start_no + task.end_date.diff(lower_date, 'm') / 30 - 1
@@ -198,7 +202,6 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, f
                 for (let i = cur_no; i <= cur_no2; i++) {
                     nos.add(i)
                 }
-                dbg.push({ start_no, end_no, cur_no, cur_no2 })
                 let x = null
                 for (let i = 0; i < hhh.length; i++) {
                     if (!Array.from(nos).some((no) => hhh[i].has(no))) {
@@ -209,7 +212,8 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, f
                         break
                     }
                 }
-                const y = getY((cur_no - start_no) / (end_no - start_no))
+                const y = getY((cur_no - start_no2) / (end_no - start_no2 + 1))
+                dbg.push({ start_no, end_no, cur_no, cur_no2, start_no2, diff: task.start_date.diff(lower_date, 'm') / 30, y })
                 const rows = bbb.flat().reduce((acc, b) => b.id === task.id ? acc + 1 : acc, 0)
                 const height = getHeight(rows / row_span)
                 return (
@@ -226,10 +230,10 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, f
             })
             const emptyDivs = []
             for (let i = 0; i < hhh.length; i++) {
-                for (let j = start_no; j <= end_no - 1; j++) {
+                for (let j = start_no2; j <= end_no; j++) {
                     if (!hhh[i].has(j)) {
                         const x = getX(i / cols)
-                        const y = getY((j - start_no) / (end_no - start_no))
+                        const y = getY((j - start_no2) / (end_no - start_no2 + 1))
                         const height = getHeight(1 / row_span)
                         emptyDivs.push(<div className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}></div>)
                     }
