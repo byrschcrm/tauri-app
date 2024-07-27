@@ -20,9 +20,9 @@ const Calendar: FC<Props> = (props) => {
         e.dataTransfer.setData('text', JSON.stringify({ task, start_no }))
     }
 
-    const funcB = (e: any, no: any) => {
+    const funcB = (e: any, no: any, span: any) => {
         const { task, start_no } = JSON.parse(e.dataTransfer.getData('text'))
-        const end_no = no
+        const end_no = no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / span))
         const add_minutes = (end_no - start_no) * 30
         const after_start_date = dayjs(task.start_date).add(add_minutes, 'm')
         const after_end_date = dayjs(task.end_date).add(add_minutes, 'm')
@@ -103,7 +103,7 @@ const createCellElements = (tasks: any[], dateRanges: any, start_no: number, fun
             draggable={c.task !== null}
             onDragOver={(e) => e.preventDefault()}
             onDragStart={(e) => funcA(e, c.task, c.no, c.span)}
-            onDrop={(e) => funcB(e, c.no)}
+            onDrop={(e) => funcB(e, c.no, c.span)}
         >
             {c.task?.name}
         </div>
