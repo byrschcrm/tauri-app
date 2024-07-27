@@ -21,16 +21,15 @@ type Props = {
 const Calendar: FC<Props> = (props) => {
     const { tasks, updateTask, setDebug } = props
 
-    const funcA = (e: any, task: any, no: any, span: any) => {
-        const start_no = no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / span))
-        e.dataTransfer.setData('text', JSON.stringify({ task, start_no }))
-        setDebug(JSON.stringify({ no, span, start_no }))
+    const dragStart = (e: any, task: any, task_start_no: any, task_row_span: any) => {
+        const grasp_no = task_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / task_row_span))
+        e.dataTransfer.setData('text', JSON.stringify({ task, grasp_no }))
     }
 
-    const funcB = (e: any, no: any, span: any) => {
-        const { task, start_no } = JSON.parse(e.dataTransfer.getData('text'))
-        const end_no = no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / span))
-        const add_minutes = (end_no - start_no) * 30
+    const drop = (e: any, cell_start_no: any, cell_row_span: any) => {
+        const { task, grasp_no } = JSON.parse(e.dataTransfer.getData('text'))
+        const release_no = cell_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / cell_row_span))
+        const add_minutes = (release_no - grasp_no) * 30
         const after_start_date = addDate(dayjs(task.start_date), add_minutes, DateType.Start)
         const after_end_date = addDate(dayjs(task.end_date), add_minutes, DateType.End)
         updateTask({ id: task.id, start_date: after_start_date, end_date: after_end_date })
@@ -45,31 +44,24 @@ const Calendar: FC<Props> = (props) => {
             <div className="flex items-center justify-end row-span-2 text-right">13:00</div>
 
             <div className="border border-gray-400 text-center">2024.07.21(日)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, funcA, funcB)}
+            {createCellElements(tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, dragStart, drop)}
 
             <div className="border border-gray-400 text-center">2024.07.22(月)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, funcA, funcB)}
+            {createCellElements(tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, dragStart, drop)}
 
             <div className="border border-gray-400 text-center">2024.07.23(火)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, funcA, funcB)}
+            {createCellElements(tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, dragStart, drop)}
 
             <div className="border border-gray-400 text-center">2024.07.24(水)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, funcA, funcB)}
+            {createCellElements(tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, dragStart, drop)}
 
-            {/* <div className="border border-gray-400 col-span-2 text-center">2024.07.25(木)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-25'), 9 * 5 + 1, funcA, funcB)}
-            {createCellElements(tasks, createDateRanges('2024-07-25'), 9 * 5 + 1, funcA, funcB)} */}
-
-            {/* <div className="border border-gray-400 col-span-2 text-center">2024.07.25(木)</div>
-            {createCellElements2(tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, funcA, funcB)} */}
-
-            {createCellElementsX3(tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, funcA, funcB, setDebug)}
+            {createCellElementsX3('2024.07.25(木)', tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, dragStart, drop, setDebug)}
 
             <div className="border border-gray-400 text-center">2024.07.26(金)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, funcA, funcB)}
+            {createCellElements(tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, dragStart, drop)}
 
             <div className="border border-gray-400 text-center">2024.07.27(土)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, funcA, funcB)}
+            {createCellElements(tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, dragStart, drop)}
         </div>
     )
 }
@@ -126,40 +118,40 @@ const createCellElementsX2 = () => {
     )
 }
 
-const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, funcA: any, funcB: any, setDebug: any) => {
+const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, setDebug: any) => {
     // [task1], [], [task2], [task2, task3], [task2, task4], [task4], [], ...
-    const aaa = dateRanges.map((dateRange: any) => {
-        return tasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
+    const tasks1 = dateRanges.map((dateRange: any) => {
+        return allTasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
     })
 
     // setDebug(JSON.stringify(aaa))
 
     // [[task1]], [[]], [[task2], [task2, task3], [task2, task4], [task4]], [[]], ...
-    const bbbb = []
-    let bufs: any[] = []
-    for (let i = 0; i < aaa.length; i++) {
-        const aa = aaa[i]
+    const tasks2 = []
+    let tasksBufs: any[] = []
+    for (let i = 0; i < tasks1.length; i++) {
+        const tasks = tasks1[i]
         if (i === 0) {
-            bufs.push(aa)
-        } else if (bufs.length > 0 && aa.some((a: any) => bufs[bufs.length - 1].some((buf: any) => buf.id === a.id))) {
-            bufs.push(aa)
+            tasksBufs.push(tasks)
+        } else if (tasksBufs.length > 0 && tasks.some((task: any) => tasksBufs[tasksBufs.length - 1].some((buf: any) => buf.id === task.id))) {
+            tasksBufs.push(tasks)
         } else {
-            bbbb.push(bufs)
-            bufs = []
-            bufs.push(aa)
+            tasks2.push(tasksBufs)
+            tasksBufs = []
+            tasksBufs.push(tasks)
         }
     }
-    bbbb.push(bufs)
+    tasks2.push(tasksBufs)
 
     // setDebug(JSON.stringify(bbbb))
 
-    let dbg: any[] = []
+    // let dbg: any[] = []
 
     const lower_date = dateRanges[0].from
-    const ccc = bbbb.map((bbb) => {
-        if (bbb.length === 1) {
-            const bb = bbb[0]
-            if (bb.length === 0) {
+    const divs = tasks2.map((tasksList) => {
+        if (tasksList.length === 1) {
+            const tasks = tasksList[0]
+            if (tasks.length === 0) {
                 return (
                     <div className="border border-gray-400 flex items-center justify-center"
                         draggable={true}
@@ -170,26 +162,26 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
                     </div>
                 )
             } else {
-                const task = bb[0]
+                const task = tasks[0]
                 const task_start_no = lower_no + task.start_date.diff(lower_date, 'm') / 30
                 return (
                     <div
                         className="border border-gray-400 flex items-center justify-center bg-teal-500 cursor-pointer"
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
-                        onDragStart={(e) => funcA(e, task, task_start_no, 1)}
-                        onDrop={(e) => funcB(e, task_start_no, 1)}
+                        onDragStart={(e) => dragStart(e, task, task_start_no, 1)}
+                        onDrop={(e) => drop(e, task_start_no, 1)}
                     >
                         {task.name}
                     </div>
                 )
             }
         } else {
-            const tasks = Array.from((new Map(bbb.flat().map((b) => [b.id, b]))).values())
-            const sg_col_span = bbb.reduce((acc, bb) => bb.length > acc ? bb.length : acc, 0)
-            const sg_row_span = bbb.length
-            const sg_upper_date = bbb[bbb.length - 1][0].end_date
-            const sg_lower_no = lower_no + bbb[0][0].start_date.diff(lower_date, 'm') / 30
+            const tasks = Array.from((new Map(tasksList.flat().map((b) => [b.id, b]))).values())
+            const sg_col_span = tasksList.reduce((acc, ts) => ts.length > acc ? ts.length : acc, 0)
+            const sg_row_span = tasksList.length
+            const sg_upper_date = tasksList[tasksList.length - 1][0].end_date
+            const sg_lower_no = lower_no + tasksList[0][0].start_date.diff(lower_date, 'm') / 30
             const sg_upper_no = lower_no + sg_upper_date.diff(lower_date, 'm') / 30 - 1
             const width = getWidth(1 / sg_col_span)
             const filledNos = [...Array(sg_col_span)].map((_) => new Set<number>([]))
@@ -197,8 +189,8 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
                 const task_start_no = lower_no + task.start_date.diff(lower_date, 'm') / 30
                 const task_end_no = lower_no + task.end_date.diff(lower_date, 'm') / 30 - 1
                 const task_nos = new Set<number>([])
-                for (let i = task_start_no; i <= task_end_no; i++) {
-                    task_nos.add(i)
+                for (let no = task_start_no; no <= task_end_no; no++) {
+                    task_nos.add(no)
                 }
                 let x = null
                 for (let col_no = 0; col_no < filledNos.length; col_no++) {
@@ -211,15 +203,15 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
                     }
                 }
                 const y = getY((task_start_no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
-                const task_row_span = bbb.flat().reduce((acc, b) => b.id === task.id ? acc + 1 : acc, 0)
+                const task_row_span = tasksList.flat().reduce((acc, t) => t.id === task.id ? acc + 1 : acc, 0)
                 const height = getHeight(task_row_span / sg_row_span)
                 return (
                     <div
                         className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} bg-teal-500 cursor-pointer`}
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
-                        onDragStart={(e) => funcA(e, task, task_start_no, task_row_span)}
-                        onDrop={(e) => funcB(e, task_start_no, task_row_span)}
+                        onDragStart={(e) => dragStart(e, task, task_start_no, task_row_span)}
+                        onDrop={(e) => drop(e, task_start_no, task_row_span)}
                     >
                         {task.name}
                     </div>
@@ -234,7 +226,10 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
                         const height = getHeight(1 / sg_row_span)
                         emptyDivs.push(
                             <div
-                                className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}>
+                                className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={(e) => drop(e, no, 1)}
+                            >
                             </div>
                         )
                     }
@@ -249,7 +244,7 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
         }
     })
 
-    setDebug(JSON.stringify(dbg))
+    // setDebug(JSON.stringify(dbg))
 
     // lower_date -> sg_lower_date -> task.start_date -> task.end_date -> sg_upper_date -> upper_date
     // lower_no   -> sg_lower_no   -> task_start_no   -> task_end_no   -> sg_upper_no   -> upper_no
@@ -264,8 +259,8 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
 
     return (
         <>
-            <div className="border border-gray-400 text-center">2024.07.25(木)</div>
-            {ccc}
+            <div className="border border-gray-400 text-center">{ymd_caption}</div>
+            {divs}
         </>
     )
 }
