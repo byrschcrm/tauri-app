@@ -54,6 +54,8 @@ const Calendar: FC<Props> = (props) => {
 }
 
 const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, setDebug: any) => {
+    // const dbg: any[] = []
+
     // [task1], [], [task2], [task2, task3], [task2, task4], [task4], [], ...
     const tasks1 = dateRanges.map((dateRange: any) => {
         return allTasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
@@ -182,6 +184,8 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
     // filledNos
     // col_no <-> (row_no)
     // sg: subgrid
+
+    // if (setDebug) setDebug(JSON.stringify(dbg))
 
     return (
         <>
