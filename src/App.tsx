@@ -33,7 +33,7 @@ function App() {
       <div>
         Calendar
       </div>
-      <Calendar tasks={tasks} setDebug={setDebug} />
+      <Calendar tasks={tasks} updateTask={updateTask} setDebug={setDebug} />
       <div>
         TaskList
       </div>

@@ -8,19 +8,25 @@ dayjs.extend(isSameOrBefore);
 
 type Props = {
     tasks: any[]
+    updateTask: any
     setDebug: any
 }
 
 const Calendar: FC<Props> = (props) => {
-    const { tasks, setDebug } = props
+    const { tasks, updateTask, setDebug } = props
 
-    const funcA = (no: any, span: any, height: number, y: number) => {
-        const start_no = no + Math.floor(y / (height / span))
-        setDebug(JSON.stringify({ no, span, height, y, start_no }))
+    const funcA = (e: any, task: any, no: any, span: any) => {
+        const start_no = no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / span))
+        e.dataTransfer.setData('text', JSON.stringify({ task, start_no }))
     }
 
-    const funcB = (no: any) => {
-        setDebug(JSON.stringify({ no }))
+    const funcB = (e: any, no: any) => {
+        const { task, start_no } = JSON.parse(e.dataTransfer.getData('text'))
+        const end_no = no
+        const add_minutes = (end_no - start_no) * 30
+        const after_start_date = dayjs(task.start_date).add(add_minutes, 'm')
+        const after_end_date = dayjs(task.end_date).add(add_minutes, 'm')
+        updateTask({ id: task.id, start_date: after_start_date, end_date: after_end_date })
     }
 
     return (
@@ -93,11 +99,11 @@ const createCellElements = (tasks: any[], dateRanges: any, start_no: number, fun
 
     return ccc.map((c) =>
         <div
-            className={`border border-gray-400 flex items-center justify-center ${getRowSpan(c.span)} ${c.task ? 'bg-teal-500' : ''}`}
+            className={`border border-gray-400 flex items-center justify-center ${getRowSpan(c.span)} ${c.task ? 'bg-teal-500 cursor-pointer' : ''}`}
             draggable={c.task !== null}
             onDragOver={(e) => e.preventDefault()}
-            onDragStart={(e) => funcA(c.no, c.span, e.currentTarget.clientHeight, e.nativeEvent.offsetY)}
-            onDrop={(e) => c.task === null && funcB(c.no)}
+            onDragStart={(e) => funcA(e, c.task, c.no, c.span)}
+            onDrop={(e) => funcB(e, c.no)}
         >
             {c.task?.name}
         </div>
