@@ -124,10 +124,8 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
         return allTasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
     })
 
-    // setDebug(JSON.stringify(aaa))
-
     // [[task1]], [[]], [[task2], [task2, task3], [task2, task4], [task4]], [[]], ...
-    const tasks2 = []
+    const tasks2: any[] = []
     let tasksBufs: any[] = []
     for (let i = 0; i < tasks1.length; i++) {
         const tasks = tasks1[i]
@@ -143,21 +141,18 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
     }
     tasks2.push(tasksBufs)
 
-    // setDebug(JSON.stringify(bbbb))
-
-    // let dbg: any[] = []
-
+    // [<div>]
     const lower_date = dateRanges[0].from
-    const divs = tasks2.map((tasksList) => {
+    const divs = tasks2.map((tasksList: any[], idx) => {
         if (tasksList.length === 1) {
             const tasks = tasksList[0]
             if (tasks.length === 0) {
+                const no = lower_no + tasks2.reduce((acc, ts, idx2) => idx2 < idx ? acc + ts.length : acc, 0)
                 return (
                     <div className="border border-gray-400 flex items-center justify-center"
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
-                    // onDragStart={(e) => funcA(e, bb[0], cur_no, 1)}
-                    // onDrop={(e) => funcB(e, cur_no, 1)}
+                        onDrop={(e) => drop(e, no, 1)}
                     >
                     </div>
                 )
@@ -244,8 +239,6 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
         }
     })
 
-    // setDebug(JSON.stringify(dbg))
-
     // lower_date -> sg_lower_date -> task.start_date -> task.end_date -> sg_upper_date -> upper_date
     // lower_no   -> sg_lower_no   -> task_start_no   -> task_end_no   -> sg_upper_no   -> upper_no
     // filledDiv <-> emptyDiv
@@ -254,8 +247,6 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
     // filledNos
     // col_no <-> (row_no)
     // sg: subgrid
-
-    // 問題点：emptyDivのnoが不明
 
     return (
         <>
