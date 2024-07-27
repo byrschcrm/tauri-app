@@ -6,6 +6,12 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
+const DateType = {
+    Start: 1,
+    End: 2,
+} as const
+type DateType = typeof DateType[keyof typeof DateType]
+
 type Props = {
     tasks: any[]
     updateTask: any
@@ -24,8 +30,8 @@ const Calendar: FC<Props> = (props) => {
         const { task, start_no } = JSON.parse(e.dataTransfer.getData('text'))
         const end_no = no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / span))
         const add_minutes = (end_no - start_no) * 30
-        const after_start_date = dayjs(task.start_date).add(add_minutes, 'm')
-        const after_end_date = dayjs(task.end_date).add(add_minutes, 'm')
+        const after_start_date = addDate(dayjs(task.start_date), add_minutes, DateType.Start)
+        const after_end_date = addDate(dayjs(task.end_date), add_minutes, DateType.End)
         updateTask({ id: task.id, start_date: after_start_date, end_date: after_end_date })
     }
 
@@ -141,6 +147,32 @@ const getRowSpan = (num: any) => {
         default:
             return ''
     }
+}
+
+const addDate = (date: any, minutes: number, date_type: DateType) => {
+    let ret = date
+    let cur_minutes = minutes
+    const [lower_limit, upper_limit] = date_type === DateType.Start ? ['09:00:00', '13:00:00'] : ['09:30:00', '13:30:00']
+
+    if (cur_minutes > 0) {
+        while (cur_minutes > 0) {
+            ret = ret.add(30, 'm')
+            if (ret.isAfter(`${ret.format('YYYY-MM-DD')} ${upper_limit}`)) {
+                ret = dayjs(`${ret.add(1, 'd').format('YYYY-MM-DD')} ${lower_limit}`)
+            }
+            cur_minutes -= 30
+        }
+    } else if (cur_minutes < 0) {
+        while (cur_minutes < 0) {
+            ret = ret.subtract(30, 'm')
+            if (ret.isBefore(`${ret.format('YYYY-MM-DD')} ${lower_limit}`)) {
+                ret = dayjs(`${ret.subtract(1, 'd').format('YYYY-MM-DD')} ${upper_limit}`)
+            }
+            cur_minutes += 30
+        }
+    }
+
+    return ret
 }
 
 export default Calendar
