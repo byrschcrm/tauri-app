@@ -155,6 +155,7 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
 
     let dbg: any[] = []
 
+    const lower_date = dateRanges[0].from
     const ccc = bbbb.map((bbb) => {
         if (bbb.length === 1) {
             const bb = bbb[0]
@@ -169,17 +170,17 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
                     </div>
                 )
             } else {
-                const lower_date = bbb[0][0].start_date
-                const cur_no = lower_no + bb[0].start_date.diff(lower_date, 'm') / 30
+                const task = bb[0]
+                const task_start_no = lower_no + task.start_date.diff(lower_date, 'm') / 30
                 return (
                     <div
                         className="border border-gray-400 flex items-center justify-center bg-teal-500 cursor-pointer"
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
-                        onDragStart={(e) => funcA(e, bb[0], cur_no, 1)}
-                        onDrop={(e) => funcB(e, cur_no, 1)}
+                        onDragStart={(e) => funcA(e, task, task_start_no, 1)}
+                        onDrop={(e) => funcB(e, task_start_no, 1)}
                     >
-                        {bb[0].name}
+                        {task.name}
                     </div>
                 )
             }
@@ -187,7 +188,6 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
             const tasks = Array.from((new Map(bbb.flat().map((b) => [b.id, b]))).values())
             const sg_col_span = bbb.reduce((acc, bb) => bb.length > acc ? bb.length : acc, 0)
             const sg_row_span = bbb.length
-            const lower_date = dateRanges[0].from
             const sg_upper_date = bbb[bbb.length - 1][0].end_date
             const sg_lower_no = lower_no + bbb[0][0].start_date.diff(lower_date, 'm') / 30
             const sg_upper_no = lower_no + sg_upper_date.diff(lower_date, 'm') / 30 - 1
@@ -211,7 +211,6 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
                     }
                 }
                 const y = getY((task_start_no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
-                dbg.push({ lower_no, sg_lower_no, start_no: task_start_no, end_no: task_end_no })
                 const task_row_span = bbb.flat().reduce((acc, b) => b.id === task.id ? acc + 1 : acc, 0)
                 const height = getHeight(task_row_span / sg_row_span)
                 return (
@@ -233,7 +232,11 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
                         const x = getX(col_no / sg_col_span)
                         const y = getY((no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
                         const height = getHeight(1 / sg_row_span)
-                        emptyDivs.push(<div className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}></div>)
+                        emptyDivs.push(
+                            <div
+                                className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}>
+                            </div>
+                        )
                     }
                 }
             }
@@ -256,6 +259,8 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, f
     // filledNos
     // col_no <-> (row_no)
     // sg: subgrid
+
+    // 問題点：emptyDivのnoが不明
 
     return (
         <>
