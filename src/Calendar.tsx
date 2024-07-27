@@ -126,7 +126,7 @@ const createCellElementsX2 = () => {
     )
 }
 
-const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, funcA: any, funcB: any, setDebug: any) => {
+const createCellElementsX3 = (tasks: any[], dateRanges: any, lower_no: number, funcA: any, funcB: any, setDebug: any) => {
     // [task1], [], [task2], [task2, task3], [task2, task4], [task4], [], ...
     const aaa = dateRanges.map((dateRange: any) => {
         return tasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
@@ -170,7 +170,7 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, f
                 )
             } else {
                 const lower_date = bbb[0][0].start_date
-                const cur_no = start_no + bb[0].start_date.diff(lower_date, 'm') / 30
+                const cur_no = lower_no + bb[0].start_date.diff(lower_date, 'm') / 30
                 return (
                     <div
                         className="border border-gray-400 flex items-center justify-center bg-teal-500 cursor-pointer"
@@ -184,64 +184,62 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, f
                 )
             }
         } else {
-            const cols = bbb.reduce((acc, bb) => bb.length > acc ? bb.length : acc, 0)
-            const width = getWidth(1 / cols)
-            const row_span = bbb.length
             const tasks = Array.from((new Map(bbb.flat().map((b) => [b.id, b]))).values())
-            const hhh = [...Array(cols)].map((_) => new Set<number>([]))
-            // const lower_date = bbb[0][0].start_date
+            const sg_col_span = bbb.reduce((acc, bb) => bb.length > acc ? bb.length : acc, 0)
+            const sg_row_span = bbb.length
             const lower_date = dateRanges[0].from
-            const upper_date = bbb[bbb.length - 1][0].end_date
-            // const end_no = start_no + upper_date.diff(lower_date, 'm') / 30
-            const end_no = start_no + upper_date.diff(lower_date, 'm') / 30 - 1
-            const start_no2 = start_no + bbb[0][0].start_date.diff(lower_date, 'm') / 30
-            const xxx = tasks.map((task) => {
-                const cur_no = start_no + task.start_date.diff(lower_date, 'm') / 30
-                const cur_no2 = start_no + task.end_date.diff(lower_date, 'm') / 30 - 1
-                const nos = new Set<number>([])
-                for (let i = cur_no; i <= cur_no2; i++) {
-                    nos.add(i)
+            const sg_upper_date = bbb[bbb.length - 1][0].end_date
+            const sg_lower_no = lower_no + bbb[0][0].start_date.diff(lower_date, 'm') / 30
+            const sg_upper_no = lower_no + sg_upper_date.diff(lower_date, 'm') / 30 - 1
+            const width = getWidth(1 / sg_col_span)
+            const filledNos = [...Array(sg_col_span)].map((_) => new Set<number>([]))
+            const filledDivs = tasks.map((task) => {
+                const task_start_no = lower_no + task.start_date.diff(lower_date, 'm') / 30
+                const task_end_no = lower_no + task.end_date.diff(lower_date, 'm') / 30 - 1
+                const task_nos = new Set<number>([])
+                for (let i = task_start_no; i <= task_end_no; i++) {
+                    task_nos.add(i)
                 }
                 let x = null
-                for (let i = 0; i < hhh.length; i++) {
-                    if (!Array.from(nos).some((no) => hhh[i].has(no))) {
-                        for (const no of nos) {
-                            hhh[i].add(no)
+                for (let col_no = 0; col_no < filledNos.length; col_no++) {
+                    if (!Array.from(task_nos).some((no) => filledNos[col_no].has(no))) {
+                        for (const no of task_nos) {
+                            filledNos[col_no].add(no)
                         }
-                        x = getX(i / cols)
+                        x = getX(col_no / sg_col_span)
                         break
                     }
                 }
-                const y = getY((cur_no - start_no2) / (end_no - start_no2 + 1))
-                dbg.push({ start_no, end_no, cur_no, cur_no2, start_no2, diff: task.start_date.diff(lower_date, 'm') / 30, y })
-                const rows = bbb.flat().reduce((acc, b) => b.id === task.id ? acc + 1 : acc, 0)
-                const height = getHeight(rows / row_span)
+                const y = getY((task_start_no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
+                dbg.push({ lower_no, sg_lower_no, start_no: task_start_no, end_no: task_end_no })
+                const task_row_span = bbb.flat().reduce((acc, b) => b.id === task.id ? acc + 1 : acc, 0)
+                const height = getHeight(task_row_span / sg_row_span)
                 return (
                     <div
                         className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} bg-teal-500 cursor-pointer`}
-                        draggable={task !== null}
+                        draggable={true}
                         onDragOver={(e) => e.preventDefault()}
-                        onDragStart={(e) => funcA(e, task, cur_no, rows)}
-                        onDrop={(e) => funcB(e, cur_no, rows)}
+                        onDragStart={(e) => funcA(e, task, task_start_no, task_row_span)}
+                        onDrop={(e) => funcB(e, task_start_no, task_row_span)}
                     >
                         {task.name}
                     </div>
                 )
             })
             const emptyDivs = []
-            for (let i = 0; i < hhh.length; i++) {
-                for (let j = start_no2; j <= end_no; j++) {
-                    if (!hhh[i].has(j)) {
-                        const x = getX(i / cols)
-                        const y = getY((j - start_no2) / (end_no - start_no2 + 1))
-                        const height = getHeight(1 / row_span)
+            for (let col_no = 0; col_no < filledNos.length; col_no++) {
+                for (let no = sg_lower_no; no <= sg_upper_no; no++) {
+                    if (!filledNos[col_no].has(no)) {
+                        const x = getX(col_no / sg_col_span)
+                        const y = getY((no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
+                        const height = getHeight(1 / sg_row_span)
                         emptyDivs.push(<div className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}></div>)
                     }
                 }
             }
             return (
-                <div className={`relative ${getRowSpan(row_span)}`}>
-                    {xxx}
+                <div className={`relative ${getRowSpan(sg_row_span)}`}>
+                    {filledDivs}
                     {emptyDivs}
                 </div>
             )
@@ -249,6 +247,15 @@ const createCellElementsX3 = (tasks: any[], dateRanges: any, start_no: number, f
     })
 
     setDebug(JSON.stringify(dbg))
+
+    // lower_date -> sg_lower_date -> task.start_date -> task.end_date -> sg_upper_date -> upper_date
+    // lower_no   -> sg_lower_no   -> task_start_no   -> task_end_no   -> sg_upper_no   -> upper_no
+    // filledDiv <-> emptyDiv
+    // sg_col_span <-> sg_row_span
+    // (task_col_span) <-> task_row_span
+    // filledNos
+    // col_no <-> (row_no)
+    // sg: subgrid
 
     return (
         <>
