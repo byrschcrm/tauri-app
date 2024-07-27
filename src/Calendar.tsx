@@ -1,6 +1,6 @@
 import "./App.css";
 import { FC } from 'react';
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isSameOrAfter);
@@ -42,79 +42,14 @@ const Calendar: FC<Props> = (props) => {
             <div className="flex items-center justify-end row-span-2 text-right">11:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">12:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">13:00</div>
-
-            <div className="border border-gray-400 text-center">2024.07.21(日)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, dragStart, drop)}
-
-            <div className="border border-gray-400 text-center">2024.07.22(月)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, dragStart, drop)}
-
-            <div className="border border-gray-400 text-center">2024.07.23(火)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, dragStart, drop)}
-
-            <div className="border border-gray-400 text-center">2024.07.24(水)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, dragStart, drop)}
-
+            {createCellElementsX3('2024.07.21(日)', tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, dragStart, drop, setDebug)}
+            {createCellElementsX3('2024.07.22(月)', tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, dragStart, drop, setDebug)}
+            {createCellElementsX3('2024.07.23(火)', tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, dragStart, drop, setDebug)}
+            {createCellElementsX3('2024.07.24(水)', tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, dragStart, drop, setDebug)}
             {createCellElementsX3('2024.07.25(木)', tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, dragStart, drop, setDebug)}
-
-            <div className="border border-gray-400 text-center">2024.07.26(金)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, dragStart, drop)}
-
-            <div className="border border-gray-400 text-center">2024.07.27(土)</div>
-            {createCellElements(tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, dragStart, drop)}
+            {createCellElementsX3('2024.07.26(金)', tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, dragStart, drop, setDebug)}
+            {createCellElementsX3('2024.07.27(土)', tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, dragStart, drop, setDebug)}
         </div>
-    )
-}
-
-const createCellElementsX1 = () => {
-    return (
-        <>
-            <div className="border border-gray-400 col-span-2 text-center">2024.07.25(木)</div>
-            <div className="border border-gray-400 col-span-2 row-span-1"></div>
-            <div className="border border-gray-400 col-span-2 row-span-1"></div>
-            <div className="border border-gray-400 col-span-1 row-span-3"></div>
-            <div className="border border-gray-400 col-span-1 row-span-1"></div>
-            <div className="border border-gray-400 col-span-2 row-span-1"></div>
-            <div className="border border-gray-400 col-span-2 row-span-1"></div>
-            <div className="border border-gray-400 col-span-2 row-span-1"></div>
-            <div className="border border-gray-400 col-span-1 row-span-1"></div>
-            <div className="border border-gray-400 col-span-1 row-span-1"></div>
-            <div className="border border-gray-400 col-span-1 row-span-2"></div>
-        </>
-    )
-}
-
-const createCellElementsX2 = () => {
-    return (
-        <>
-            <div className="border border-gray-400 text-center">2024.07.25(木)</div>
-            <div className="border border-gray-400"></div>
-            <div className="border border-gray-400"></div>
-            {/* <div className="flex flex-col flex-wrap row-span-4">
-                <div className="border border-gray-400 w-1/2 h-3/4">task2</div>
-                <div className="border border-gray-400 w-1/2 h-1/4"></div>
-                <div className="border border-gray-400 w-1/2 h-1/4"></div>
-                <div className="border border-gray-400 w-1/2 h-1/4">task3</div>
-                <div className="border border-gray-400 w-1/2 h-2/4">task4</div>
-            </div> */}
-            {/* <div className="grid grid-cols-2 grid-rows-4 grid-flow-col h-full row-span-4">
-                <div className="border border-gray-400 row-span-3">task2</div>
-                <div className="border border-gray-400 row-span-1"></div>
-                <div className="border border-gray-400 row-span-1"></div>
-                <div className="border border-gray-400 row-span-1">task3</div>
-                <div className="border border-gray-400 row-span-2">task4</div>
-            </div> */}
-            <div className="relative row-span-4">
-                <div className="absolute border border-gray-400 w-1/2 h-3/4 inset-x-0 inset-y-0">task2</div>
-                <div className="absolute border border-gray-400 w-1/2 h-1/4 inset-x-0 inset-y-3/4"></div>
-                <div className="absolute border border-gray-400 w-1/2 h-1/4 inset-x-1/2 inset-y-0"></div>
-                <div className="absolute border border-gray-400 w-1/2 h-1/4 inset-x-1/2 inset-y-1/4">task3</div>
-                <div className="absolute border border-gray-400 w-1/2 h-2/4 inset-x-1/2 inset-y-2/4">task4</div>
-            </div>
-            <div className="border border-gray-400"></div>
-            <div className="border border-gray-400"></div>
-            <div className="border border-gray-400"></div>
-        </>
     )
 }
 
@@ -256,123 +191,6 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
     )
 }
 
-const calcNo = (start_no: number, upper_date: Dayjs, start_date: Dayjs) => {
-    return start_no + upper_date.diff(start_date, 'm') / 30
-}
-
-const createCellElements = (tasks: any[], dateRanges: any, start_no: number, funcA: any, funcB: any) => {
-    // task1, null, null, task2, task2, null, ...
-    const aaa = dateRanges.map((dateRange: any) => {
-        return tasks.find((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to)) ?? null
-    })
-
-    // { task1, span: 1 }, { null, span: 1 }, { null, span: 1 }, { task2, span: 2 }, { null, span: 1 }, ...
-    const bbb: any[] = []
-    let prevA = null
-    let cur_span = 0
-    for (let i = 0; i < aaa.length; i++) {
-        const a = aaa[i]
-        if (i === 0) {
-            prevA = a
-            cur_span = 1
-        } else if (a !== null && prevA !== null && a.id === prevA.id) {
-            cur_span += 1
-        } else {
-            bbb.push({ task: prevA, span: cur_span })
-            prevA = a
-            cur_span = 1
-        }
-        if (i === aaa.length - 1) {
-            bbb.push({ task: prevA, span: cur_span })
-        }
-    }
-
-    // { task1, span: 1, no: 1 }, { null, span: 1, no: 2 }, { null, span: 1, no: 3 }, { task2, span: 2, no: 4 }, { null, span: 1, no: 6 }, ...
-    const ccc: any[] = []
-    let cur_no = start_no
-    for (let i = 0; i < bbb.length; i++) {
-        const b = bbb[i]
-        ccc.push({ ...b, no: cur_no })
-        cur_no += b.span
-    }
-
-    return ccc.map((c) =>
-        <div
-            className={`border border-gray-400 flex items-center justify-center ${getRowSpan(c.span)} ${c.task ? 'bg-teal-500 cursor-pointer' : ''}`}
-            draggable={c.task !== null}
-            onDragOver={(e) => e.preventDefault()}
-            onDragStart={(e) => funcA(e, c.task, c.no, c.span)}
-            onDrop={(e) => funcB(e, c.no, c.span)}
-        >
-            {c.task?.name}
-        </div>
-    )
-}
-
-const createCellElements2 = (tasks: any[], dateRanges: any, start_no: number, funcA: any, funcB: any) => {
-    // [task1], [], [task2], [task2, task3], [task2, task4], [task4], [], ...
-    const aaa = dateRanges.map((dateRange: any) => {
-        return tasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
-    })
-
-    // { [task1], span: 1 }, { [], span: 1 }, { [], span: 1 }, { [task2, task3], span: 2 }, { [], span: 1 }, ...
-
-    // grid-cols-2
-    // col-span-2, row-span-1 /
-    // col-span-2, row-span-1 /
-    // col-span-1, row-span-3 / col-span-1, row-span-1
-    //                        / col-span-1, row-span-1
-    //                        / col-span-1, row-span-2
-    // col-span-1, row-span-1 /
-    // col-span-2, row-span-1 /
-    // ...
-
-    return (
-        // <div className="grid grid-cols-2">
-        <>
-            <div className="col-span-2 row-span-1"></div>
-            <div className="col-span-2 row-span-1"></div>
-            <div className="col-span-1 row-span-3"></div>
-            <div className="col-span-1 row-span-1"></div>
-            <div className="col-span-2 row-span-1"></div>
-            <div className="col-span-1 row-span-1"></div>
-            <div className="col-span-1 row-span-1"></div>
-        </>
-        // </div>
-    )
-}
-
-const createCellElements3 = (tasks: any[], dateRanges: any, start_no: number, funcA: any, funcB: any) => {
-    // [task1], [], [task2], [task2, task3], [task2, task4], [task4], [], ...
-    const aaa = dateRanges.map((dateRange: any) => {
-        return tasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
-    })
-
-    // { [task1], span: 1 }, { [], span: 1 }, { [], span: 1 }, { [task2, task3], span: 2 }, { [], span: 1 }, ...
-
-    // grid-cols-2
-    // col-span-2, row-span-1 /
-    // col-span-2, row-span-1 /
-    // col-span-1, row-span-3 / col-span-1, row-span-1
-    //                        / col-span-1, row-span-1
-    //                        / col-span-1, row-span-2
-    // col-span-1, row-span-1 /
-    // col-span-2, row-span-1 /
-    // ...
-
-    return (
-        // <div className="grid grid-cols-2">
-        <>
-            <div className="col-span-1 row-span-1"></div>
-            <div className="col-span-1 row-span-1"></div>
-            <div className="col-span-1 row-span-2"></div>
-            <div className="col-span-1 row-span-1"></div>
-            <div className="col-span-1 row-span-1"></div>
-        </>
-        // </div>
-    )
-}
-
 const createDateRanges = (ymd: string) => {
     return [
         { from: dayjs(`${ymd} 09:00:00`), to: dayjs(`${ymd} 09:30:00`) },
@@ -385,25 +203,6 @@ const createDateRanges = (ymd: string) => {
         { from: dayjs(`${ymd} 12:30:00`), to: dayjs(`${ymd} 13:00:00`) },
         { from: dayjs(`${ymd} 13:00:00`), to: dayjs(`${ymd} 13:30:00`) },
     ]
-}
-
-const getGridCols = (num: any) => {
-    switch (num) {
-        case 1:
-            return 'grid-cols-1'
-        case 2:
-            return 'grid-cols-2'
-        case 3:
-            return 'grid-cols-3'
-        case 4:
-            return 'grid-cols-4'
-        case 5:
-            return 'grid-cols-5'
-        case 6:
-            return 'grid-cols-6'
-        default:
-            return ''
-    }
 }
 
 const getRowSpan = (num: any) => {
