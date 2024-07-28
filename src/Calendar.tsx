@@ -45,28 +45,29 @@ const Calendar: FC<Props> = (props) => {
         }
     }
 
+    const hours = [9, 10, 11, 12, 13, 14, 15, 16, 17]
+
     return (
-        <div className="grid grid-flow-col grid-rows-10">
+        <div className={`grid grid-flow-col ${getGridRows(hours.length * 2)}`}>
             <div
-                className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer"
+                className={`flex items-center justify-center ${getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
                 onClick={() => addFromDate(-1)}
             >
                 ＜
             </div>
-            <div className="flex items-center justify-end row-span-2 text-right">09:00</div>
-            <div className="flex items-center justify-end row-span-2 text-right">10:00</div>
-            <div className="flex items-center justify-end row-span-2 text-right">11:00</div>
-            <div className="flex items-center justify-end row-span-2 text-right">12:00</div>
-            <div className="flex items-center justify-end row-span-2 text-right">13:00</div>
+            {
+                hours.map((hour) => <div className="flex items-center justify-end row-span-2 text-right">{`${padLeftZero(hour, 2)}:00`}</div>)
+            }
             {
                 [0, 1, 2, 3, 4, 5, 6]
                     .map((diff) => {
                         const date = fromDate.add(diff, 'd')
-                        return createCellElementsX3(date.format(`YYYY.MM.DD(ddd)`), tasks, createDateRanges(date.format('YYYY-MM-DD')), 9 * diff + 1, dragStart, drop, null)
+                        const dateRanges = createDateRanges(date.format('YYYY-MM-DD'), hours)
+                        return createCellElementsX3(date.format(`YYYY.MM.DD(ddd)`), tasks, dateRanges, dateRanges.length * diff + 1, dragStart, drop, null)
                     })
             }
             <div
-                className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer"
+                className={`flex items-center justify-center ${getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
                 onClick={() => addFromDate(1)}
             >
                 ＞
@@ -114,8 +115,7 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => drop(e, no, start_date, 1)}
-                    >
-                    </div>
+                    ></div>
                 )
             } else {
                 const task = tasks[0]
@@ -220,18 +220,58 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
     )
 }
 
-const createDateRanges = (ymd: string) => {
-    return [
-        { from: dayjs(`${ymd} 09:00:00`), to: dayjs(`${ymd} 09:30:00`) },
-        { from: dayjs(`${ymd} 09:30:00`), to: dayjs(`${ymd} 10:00:00`) },
-        { from: dayjs(`${ymd} 10:00:00`), to: dayjs(`${ymd} 10:30:00`) },
-        { from: dayjs(`${ymd} 10:30:00`), to: dayjs(`${ymd} 11:00:00`) },
-        { from: dayjs(`${ymd} 11:00:00`), to: dayjs(`${ymd} 11:30:00`) },
-        { from: dayjs(`${ymd} 11:30:00`), to: dayjs(`${ymd} 12:00:00`) },
-        { from: dayjs(`${ymd} 12:00:00`), to: dayjs(`${ymd} 12:30:00`) },
-        { from: dayjs(`${ymd} 12:30:00`), to: dayjs(`${ymd} 13:00:00`) },
-        { from: dayjs(`${ymd} 13:00:00`), to: dayjs(`${ymd} 13:30:00`) },
-    ]
+const createDateRanges = (ymd: string, hours: number[]) => {
+    return hours.flatMap((hour) => [
+        { from: dayjs(`${ymd} ${padLeftZero(hour, 2)}:00:00`), to: dayjs(`${ymd} ${padLeftZero(hour, 2)}:30:00`) },
+        { from: dayjs(`${ymd} ${padLeftZero(hour, 2)}:30:00`), to: dayjs(`${ymd} ${padLeftZero(hour + 1, 2)}:00:00`) },
+    ]).slice(0, hours.length * 2 - 1)
+}
+
+const getGridRows = (num: any) => {
+    switch (num) {
+        case 1:
+            return 'grid-rows-1'
+        case 2:
+            return 'grid-rows-2'
+        case 3:
+            return 'grid-rows-3'
+        case 4:
+            return 'grid-rows-4'
+        case 5:
+            return 'grid-rows-5'
+        case 6:
+            return 'grid-rows-6'
+        case 7:
+            return 'grid-rows-7'
+        case 8:
+            return 'grid-rows-8'
+        case 9:
+            return 'grid-rows-9'
+        case 10:
+            return 'grid-rows-10'
+        case 11:
+            return 'grid-rows-11'
+        case 12:
+            return 'grid-rows-12'
+        case 13:
+            return 'grid-rows-13'
+        case 14:
+            return 'grid-rows-14'
+        case 15:
+            return 'grid-rows-15'
+        case 16:
+            return 'grid-rows-16'
+        case 17:
+            return 'grid-rows-17'
+        case 18:
+            return 'grid-rows-18'
+        case 19:
+            return 'grid-rows-19'
+        case 20:
+            return 'grid-rows-20'
+        default:
+            return ''
+    }
 }
 
 const getRowSpan = (num: any) => {
@@ -248,6 +288,34 @@ const getRowSpan = (num: any) => {
             return 'row-span-5'
         case 6:
             return 'row-span-6'
+        case 7:
+            return 'row-span-7'
+        case 8:
+            return 'row-span-8'
+        case 9:
+            return 'row-span-9'
+        case 10:
+            return 'row-span-10'
+        case 11:
+            return 'row-span-11'
+        case 12:
+            return 'row-span-12'
+        case 13:
+            return 'row-span-13'
+        case 14:
+            return 'row-span-14'
+        case 15:
+            return 'row-span-15'
+        case 16:
+            return 'row-span-16'
+        case 17:
+            return 'row-span-17'
+        case 18:
+            return 'row-span-18'
+        case 19:
+            return 'row-span-19'
+        case 20:
+            return 'row-span-20'
         default:
             return ''
     }
@@ -380,7 +448,7 @@ const getY = (num: number) => {
 const addDate = (date: any, minutes: number, date_type: DateType) => {
     let ret = date
     let cur_minutes = minutes
-    const [lower_limit, upper_limit] = date_type === DateType.Start ? ['09:00:00', '13:00:00'] : ['09:30:00', '13:30:00']
+    const [lower_limit, upper_limit] = date_type === DateType.Start ? ['09:00:00', '17:00:00'] : ['09:30:00', '17:30:00']
 
     if (cur_minutes > 0) {
         while (cur_minutes > 0) {
@@ -401,6 +469,10 @@ const addDate = (date: any, minutes: number, date_type: DateType) => {
     }
 
     return ret
+}
+
+const padLeftZero = (num: number, len: number) => {
+    return (Array(len).join('0') + num).slice(-len);
 }
 
 export default Calendar

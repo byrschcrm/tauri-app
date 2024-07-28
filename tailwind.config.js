@@ -6,10 +6,16 @@ export default {
   ],
   theme: {
     extend: {
+      gridRow: {
+        'span-18': 'span 18 / span 18',
+      },
       gridTemplateColumns: {
         '1/2': '50% 50%',
         '1/3': '33.3% 33.3% 33.3%',
         '1/4': '25% 25% 25% 25%',
+      },
+      gridTemplateRows: {
+        '18': 'repeat(18, minmax(0, 1fr))'
       },
       inset: {
         'y-1/5': '20%',
