@@ -27,7 +27,7 @@ const TaskList: FC<Props> = (props) => {
 
     return (
         <div
-            className="grid grid-cols-5"
+            className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr]"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => drop(e)}
         >
