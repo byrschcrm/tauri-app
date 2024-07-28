@@ -1,8 +1,10 @@
 import "./App.css";
 import { FC } from 'react';
 import dayjs from "dayjs";
+import ja from 'dayjs/locale/ja';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+dayjs.locale(ja);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -14,12 +16,14 @@ type DateType = typeof DateType[keyof typeof DateType]
 
 type Props = {
     tasks: any[]
+    fromDate: dayjs.Dayjs
+    addFromDate: any
     updateTask: any
     setDebug: any
 }
 
 const Calendar: FC<Props> = (props) => {
-    const { tasks, updateTask, setDebug } = props
+    const { tasks, fromDate, addFromDate, updateTask, setDebug } = props
 
     const dragStart = (e: any, task: any, task_start_no: any, task_row_span: any) => {
         const grasp_no = task_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / task_row_span))
@@ -43,20 +47,30 @@ const Calendar: FC<Props> = (props) => {
 
     return (
         <div className="grid grid-flow-col grid-rows-10">
-            <div className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer">＜</div>
+            <div
+                className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer"
+                onClick={() => addFromDate(-1)}
+            >
+                ＜
+            </div>
             <div className="flex items-center justify-end row-span-2 text-right">09:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">10:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">11:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">12:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">13:00</div>
-            {createCellElementsX3('2024.07.21(日)', tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, dragStart, drop, null)}
-            {createCellElementsX3('2024.07.22(月)', tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, dragStart, drop, null)}
-            {createCellElementsX3('2024.07.23(火)', tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, dragStart, drop, null)}
-            {createCellElementsX3('2024.07.24(水)', tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, dragStart, drop, null)}
-            {createCellElementsX3('2024.07.25(木)', tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, dragStart, drop, null)}
-            {createCellElementsX3('2024.07.26(金)', tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, dragStart, drop, null)}
-            {createCellElementsX3('2024.07.27(土)', tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, dragStart, drop, null)}
-            <div className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer">＞</div>
+            {
+                [0, 1, 2, 3, 4, 5, 6]
+                    .map((diff) => {
+                        const date = fromDate.add(diff, 'd')
+                        return createCellElementsX3(date.format(`YYYY.MM.DD(ddd)`), tasks, createDateRanges(date.format('YYYY-MM-DD')), 9 * diff + 1, dragStart, drop, null)
+                    })
+            }
+            <div
+                className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer"
+                onClick={() => addFromDate(1)}
+            >
+                ＞
+            </div>
         </div>
     )
 }

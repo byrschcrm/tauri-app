@@ -1,6 +1,8 @@
 import "./App.css";
 import { FC } from 'react';
 import dayjs from "dayjs";
+import ja from 'dayjs/locale/ja';
+dayjs.locale(ja);
 
 type Props = {
     tasks: any[]

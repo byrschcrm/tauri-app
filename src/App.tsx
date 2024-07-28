@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 
 function App() {
   const [tasks, setTasks] = useState<any[]>(getTasks())
+  const [fromDate, setFromDate] = useState<dayjs.Dayjs>(dayjs('2024-07-21'))
 
   const addTask = () => {
     setTasks((prevTasks) => {
@@ -26,6 +27,10 @@ function App() {
     })
   }
 
+  const addFromDate = (diff: number) => {
+    setFromDate((prevFromDate) => prevFromDate.add(diff * 7, 'd'))
+  }
+
   const [debug, setDebug] = useState<any>(null)
 
   return (
@@ -33,7 +38,7 @@ function App() {
       <div>
         Calendar
       </div>
-      <Calendar tasks={tasks} updateTask={updateTask} setDebug={setDebug} />
+      <Calendar tasks={tasks} fromDate={fromDate} addFromDate={addFromDate} updateTask={updateTask} setDebug={setDebug} />
       <div>
         TaskList
       </div>
