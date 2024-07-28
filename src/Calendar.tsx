@@ -54,6 +54,7 @@ const Calendar: FC<Props> = (props) => {
             <div
                 className={`flex items-center justify-center ${getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
                 onClick={() => addFromDate(-1)}
+                onDragEnter={() => addFromDate(-1)}
             >
                 ＜
             </div>
@@ -71,6 +72,7 @@ const Calendar: FC<Props> = (props) => {
             <div
                 className={`flex items-center justify-center ${getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
                 onClick={() => addFromDate(1)}
+                onDragEnter={() => addFromDate(1)}
             >
                 ＞
             </div>
