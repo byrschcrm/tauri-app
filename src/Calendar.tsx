@@ -43,6 +43,7 @@ const Calendar: FC<Props> = (props) => {
 
     return (
         <div className="grid grid-flow-col grid-rows-10">
+            <div className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer">＜</div>
             <div className="flex items-center justify-end row-span-2 text-right">09:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">10:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">11:00</div>
@@ -55,6 +56,7 @@ const Calendar: FC<Props> = (props) => {
             {createCellElementsX3('2024.07.25(木)', tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, dragStart, drop, null)}
             {createCellElementsX3('2024.07.26(金)', tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, dragStart, drop, null)}
             {createCellElementsX3('2024.07.27(土)', tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, dragStart, drop, null)}
+            <div className="flex items-center justify-center row-span-10 text-right bg-cyan-100 cursor-pointer">＞</div>
         </div>
     )
 }
