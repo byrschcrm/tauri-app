@@ -1,32 +1,41 @@
 import "./App.css";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from "./Calendar"
 import TaskList from "./TaskList";
 import TaskModal from "./TaskModal";
 import dayjs from "dayjs";
 
 function App() {
-  const [tasks, setTasks] = useState<any[]>(getTasks())
-  const [fromDate, setFromDate] = useState<dayjs.Dayjs>(dayjs('2024-07-21'))
+  const [tasksHistory, setTasksHistory] = useState<any[][]>([getTasks()])
+  const [curTasksIdx, setCurTasksIdx] = useState(0)
+  const tasks = tasksHistory[curTasksIdx]
 
   const addTask = (partTask: any) => {
-    setTasks((prevTasks) => {
-      const new_id = prevTasks.reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
-      return prevTasks.concat([{ id: new_id, ...partTask }])
+    setTasksHistory((prevHistory) => {
+      const new_id = prevHistory[curTasksIdx].reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
+      const newTasks = prevHistory[curTasksIdx].concat([{ id: new_id, ...partTask }])
+      return prevHistory.slice(0, curTasksIdx + 1).concat([newTasks])
     })
+    setCurTasksIdx((prevIdx) => prevIdx + 1)
   }
 
   const updateTask = (partTask: any) => {
-    setTasks((prevTasks) => {
-      return prevTasks.map((task) => task.id === partTask.id ? { ...task, ...partTask } : task)
+    setTasksHistory((prevHistory) => {
+      const newTasks = prevHistory[curTasksIdx].map((task) => task.id === partTask.id ? { ...task, ...partTask } : task)
+      return prevHistory.slice(0, curTasksIdx + 1).concat([newTasks])
     })
+    setCurTasksIdx((prevIdx) => prevIdx + 1)
   }
 
   const deleteTask = (id: any) => {
-    setTasks((prevTasks) => {
-      return prevTasks.filter((task) => task.id !== id)
+    setTasksHistory((prevHistory) => {
+      const newTasks = prevHistory[curTasksIdx].filter((task) => task.id !== id)
+      return prevHistory.slice(0, curTasksIdx + 1).concat([newTasks])
     })
+    setCurTasksIdx((prevIdx) => prevIdx + 1)
   }
+
+  const [fromDate, setFromDate] = useState<dayjs.Dayjs>(dayjs('2024-07-21'))
 
   const addFromDate = (diff: number) => {
     setFromDate((prevFromDate) => prevFromDate.add(diff * 7, 'd'))
@@ -48,6 +57,18 @@ function App() {
     setEditModalTask(task)
     setIsOpenEditTaskModal(true)
   }
+
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        setCurTasksIdx((prevIdx) => prevIdx > 0 ? prevIdx - 1 : prevIdx)
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+        setCurTasksIdx((prevIdx) => prevIdx < tasksHistory.length - 1 ? prevIdx + 1 : prevIdx)
+      }
+    }
+    window.addEventListener('keydown', listener)
+    return () => window.removeEventListener('keydown', listener)
+  }, [tasksHistory])
 
   const [debug, setDebug] = useState<any>(null)
 
