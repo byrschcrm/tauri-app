@@ -2,12 +2,15 @@ import "./App.css";
 import { FC } from 'react';
 
 type Props = {
+    task: any
     isOpen: boolean
+    onEdit: (task: any) => void
+    onOk: () => void
     onClose: () => void
 }
 
 const TaskModal: FC<Props> = (props) => {
-    const { isOpen, onClose } = props
+    const { task, isOpen, onEdit, onOk, onClose } = props
 
     return (
         <div
@@ -30,7 +33,7 @@ const TaskModal: FC<Props> = (props) => {
                         <div className="border border-gray-400 text-center bg-slate-200">開始時刻</div>
                         <div className="border border-gray-400 text-center bg-slate-200">終了時刻</div>
                         <div className="border border-gray-400">
-                            <input className="p-0" />
+                            <input className="p-0" value={task.name} onChange={(e) => onEdit({ ...task, name: e.target.value })} />
                         </div>
                         <div className="border border-gray-400">
                             <select></select>
@@ -39,8 +42,9 @@ const TaskModal: FC<Props> = (props) => {
                             <select></select>
                         </div>
                     </div>
-                    <div className="flex justify-end">
-                        <button className="text-white bg-blue-500">登録</button>
+                    <div className="flex justify-end gap-1">
+                        <button className="text-white bg-gray-500" onClick={onClose}>キャンセル</button>
+                        <button className="text-white bg-blue-500" onClick={onOk}>OK</button>
                     </div>
                 </div>
             </div>

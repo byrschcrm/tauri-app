@@ -9,12 +9,12 @@ function App() {
   const [tasks, setTasks] = useState<any[]>(getTasks())
   const [fromDate, setFromDate] = useState<dayjs.Dayjs>(dayjs('2024-07-21'))
 
-  // const addTask = () => {
-  //   setTasks((prevTasks) => {
-  //     const new_id = prevTasks.reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
-  //     return prevTasks.concat([{ id: new_id, name: `タスク${new_id}`, start_date: null, end_date: null }])
-  //   })
-  // }
+  const addTask = (partTask: any) => {
+    setTasks((prevTasks) => {
+      const new_id = prevTasks.reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
+      return prevTasks.concat([{ id: new_id, ...partTask }])
+    })
+  }
 
   const updateTask = (partTask: any) => {
     setTasks((prevTasks) => {
@@ -32,6 +32,8 @@ function App() {
     setFromDate((prevFromDate) => prevFromDate.add(diff * 7, 'd'))
   }
 
+  const emptyModalTask = { name: '', start_date: null, end_date: null }
+  const [modalTask, setModalTask] = useState(emptyModalTask)
   const [isOpenTaskModal, setIsOpenTaskModal] = useState(false)
 
   // useEffect(() => {
@@ -51,9 +53,24 @@ function App() {
       </div>
       <TaskList tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} />
       <div className="flex justify-end">
-        <button onClick={() => setIsOpenTaskModal(true)}>登録</button>
+        <button className="text-white bg-blue-500" onClick={() => setIsOpenTaskModal(true)}>登録</button>
       </div>
-      <TaskModal isOpen={isOpenTaskModal} onClose={() => setIsOpenTaskModal(false)} />
+      <TaskModal
+        isOpen={isOpenTaskModal}
+        task={modalTask}
+        onEdit={(task) => {
+          setModalTask(task)
+        }}
+        onOk={() => {
+          addTask(modalTask)
+          setModalTask(emptyModalTask)
+          setIsOpenTaskModal(false)
+        }}
+        onClose={() => {
+          setModalTask(emptyModalTask)
+          setIsOpenTaskModal(false)
+        }}
+      />
       <div>
         Debug: {debug}
       </div>
