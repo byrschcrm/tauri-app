@@ -1,19 +1,20 @@
 import "./App.css";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from "./Calendar"
 import TaskList from "./TaskList";
+import TaskModal from "./TaskModal";
 import dayjs from "dayjs";
 
 function App() {
   const [tasks, setTasks] = useState<any[]>(getTasks())
   const [fromDate, setFromDate] = useState<dayjs.Dayjs>(dayjs('2024-07-21'))
 
-  const addTask = () => {
-    setTasks((prevTasks) => {
-      const new_id = prevTasks.reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
-      return prevTasks.concat([{ id: new_id, name: `タスク${new_id}`, start_date: null, end_date: null }])
-    })
-  }
+  // const addTask = () => {
+  //   setTasks((prevTasks) => {
+  //     const new_id = prevTasks.reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
+  //     return prevTasks.concat([{ id: new_id, name: `タスク${new_id}`, start_date: null, end_date: null }])
+  //   })
+  // }
 
   const updateTask = (partTask: any) => {
     setTasks((prevTasks) => {
@@ -31,6 +32,12 @@ function App() {
     setFromDate((prevFromDate) => prevFromDate.add(diff * 7, 'd'))
   }
 
+  const [isOpenTaskModal, setIsOpenTaskModal] = useState(false)
+
+  // useEffect(() => {
+  //   document.body.style.overflow = "hidden"
+  // }, [])
+
   const [debug, setDebug] = useState<any>(null)
 
   return (
@@ -43,7 +50,10 @@ function App() {
         TaskList
       </div>
       <TaskList tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} />
-      <button onClick={addTask}>追加</button>
+      <div className="flex justify-end">
+        <button onClick={() => setIsOpenTaskModal(true)}>登録</button>
+      </div>
+      <TaskModal isOpen={isOpenTaskModal} onClose={() => setIsOpenTaskModal(false)} />
       <div>
         Debug: {debug}
       </div>
