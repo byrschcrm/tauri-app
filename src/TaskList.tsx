@@ -15,8 +15,19 @@ const TaskList: FC<Props> = (props) => {
         e.dataTransfer.setData('text', JSON.stringify({ task }))
     }
 
+    const drop = (e: any) => {
+        const { task, grasp_no } = JSON.parse(e.dataTransfer.getData('text'))
+        if (grasp_no !== undefined) {
+            updateTask({ id: task.id, start_date: null, end_date: null })
+        }
+    }
+
     return (
-        <div className="grid grid-cols-5">
+        <div
+            className="grid grid-cols-5"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => drop(e)}
+        >
             <div className="border border-gray-400 text-center">割付状況</div>
             <div className="border border-gray-400 text-center">名前</div>
             <div className="border border-gray-400 text-center">開始時刻</div>
