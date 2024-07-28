@@ -11,8 +11,13 @@ type Props = {
 const TaskList: FC<Props> = (props) => {
     const { tasks, updateTask, deleteTask } = props
 
+    const dragStart = (e: any, task: any) => {
+        e.dataTransfer.setData('text', JSON.stringify({ task }))
+    }
+
     return (
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
+            <div className="border border-gray-400 text-center">割付状況</div>
             <div className="border border-gray-400 text-center">名前</div>
             <div className="border border-gray-400 text-center">開始時刻</div>
             <div className="border border-gray-400 text-center">終了時刻</div>
@@ -20,6 +25,12 @@ const TaskList: FC<Props> = (props) => {
             {
                 tasks.flatMap((task) =>
                     <>
+                        <div
+                            className={`border border-gray-400 ${task.start_date && task.end_date ? '' : 'bg-teal-500 cursor-pointer'}`}
+                            draggable={!(task.start_date && task.end_date)}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDragStart={(e) => dragStart(e, task)}
+                        ></div>
                         <div className="border border-gray-400">
                             <input className="p-0" value={task.name} onChange={(e) => updateTask({ id: task.id, name: e.target.value })} />
                         </div>
@@ -37,7 +48,7 @@ const TaskList: FC<Props> = (props) => {
     )
 }
 
-const createDateOptions = (date: any) => [<option key="empty"></option>].concat(createYmdPatterns().flatMap((ymd) => createHmsPatterns().map((hms) => <option key={`${ymd}${hms}`} selected={date.isSame(`${ymd}${hms}`)}>{`${ymd} ${hms}`}</option>)))
+const createDateOptions = (date: any) => [<option key="empty"></option>].concat(createYmdPatterns().flatMap((ymd) => createHmsPatterns().map((hms) => <option key={`${ymd}${hms}`} selected={date?.isSame(`${ymd}${hms}`)}>{`${ymd} ${hms}`}</option>)))
 
 const createYmdPatterns = () => {
     return [

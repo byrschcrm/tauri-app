@@ -26,13 +26,19 @@ const Calendar: FC<Props> = (props) => {
         e.dataTransfer.setData('text', JSON.stringify({ task, grasp_no }))
     }
 
-    const drop = (e: any, cell_start_no: any, cell_row_span: any) => {
+    const drop = (e: any, cell_start_no: any, cell_start_date: any, cell_row_span: any) => {
         const { task, grasp_no } = JSON.parse(e.dataTransfer.getData('text'))
         const release_no = cell_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / cell_row_span))
-        const add_minutes = (release_no - grasp_no) * 30
-        const after_start_date = addDate(dayjs(task.start_date), add_minutes, DateType.Start)
-        const after_end_date = addDate(dayjs(task.end_date), add_minutes, DateType.End)
-        updateTask({ id: task.id, start_date: after_start_date, end_date: after_end_date })
+        if (grasp_no === undefined) {
+            const after_start_date = cell_start_date.add((release_no - cell_start_no) * 30, 'm')
+            const after_end_date = after_start_date.add(30, 'm')
+            updateTask({ id: task.id, start_date: after_start_date, end_date: after_end_date })
+        } else {
+            const add_minutes = (release_no - grasp_no) * 30
+            const after_start_date = addDate(dayjs(task.start_date), add_minutes, DateType.Start)
+            const after_end_date = addDate(dayjs(task.end_date), add_minutes, DateType.End)
+            updateTask({ id: task.id, start_date: after_start_date, end_date: after_end_date })
+        }
     }
 
     return (
@@ -85,11 +91,12 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
             const tasks = tasksList[0]
             if (tasks.length === 0) {
                 const no = lower_no + tasks2.reduce((acc, ts, idx2) => idx2 < idx ? acc + ts.length : acc, 0)
+                const start_date = lower_date.add((no - lower_no) * 30, 'm')
                 return (
                     <div className="border border-gray-400 flex items-center justify-center"
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
-                        onDrop={(e) => drop(e, no, 1)}
+                        onDrop={(e) => drop(e, no, start_date, 1)}
                     >
                     </div>
                 )
@@ -102,7 +109,7 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
                         onDragStart={(e) => dragStart(e, task, task_start_no, 1)}
-                        onDrop={(e) => drop(e, task_start_no, 1)}
+                        onDrop={(e) => drop(e, task_start_no, task.start_date, 1)}
                     >
                         {task.name}
                     </div>
@@ -143,7 +150,7 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
                         onDragStart={(e) => dragStart(e, task, task_start_no, task_row_span)}
-                        onDrop={(e) => drop(e, task_start_no, task_row_span)}
+                        onDrop={(e) => drop(e, task_start_no, task.start_date, task_row_span)}
                     >
                         {task.name}
                     </div>
@@ -156,11 +163,12 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                         const x = getX(col_no / sg_col_span)
                         const y = getY((no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
                         const height = getHeight(1 / sg_row_span)
+                        const start_date = lower_date.add((no - lower_no) * 30, 'm')
                         emptyDivs.push(
                             <div
                                 className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}
                                 onDragOver={(e) => e.preventDefault()}
-                                onDrop={(e) => drop(e, no, 1)}
+                                onDrop={(e) => drop(e, no, start_date, 1)}
                             >
                             </div>
                         )
