@@ -37,6 +37,11 @@ function App() {
   const [addModalTask, setAddModalTask] = useState(emptyModalTask)
   const [isOpenAddTaskModal, setIsOpenAddTaskModal] = useState(false)
 
+  const openAddTaskModal = (task: any) => {
+    setAddModalTask(task)
+    setIsOpenAddTaskModal(true)
+  }
+
   const [editModalTask, setEditModalTask] = useState(emptyModalTask)
   const [isOpenEditTaskModal, setIsOpenEditTaskModal] = useState(false)
   const openEditTaskModal = (task: any) => {
@@ -51,7 +56,7 @@ function App() {
       <div>
         Calendar
       </div>
-      <Calendar tasks={tasks} fromDate={fromDate} addFromDate={addFromDate} updateTask={updateTask} openEditTaskModal={openEditTaskModal} setDebug={setDebug} />
+      <Calendar tasks={tasks} fromDate={fromDate} addFromDate={addFromDate} updateTask={updateTask} openAddTaskModal={openAddTaskModal} openEditTaskModal={openEditTaskModal} setDebug={setDebug} />
       <div>
         TaskList
       </div>

@@ -19,12 +19,13 @@ type Props = {
     fromDate: dayjs.Dayjs
     addFromDate: any
     updateTask: any
+    openAddTaskModal: any
     openEditTaskModal: any
     setDebug: any
 }
 
 const Calendar: FC<Props> = (props) => {
-    const { tasks, fromDate, addFromDate, updateTask, openEditTaskModal, setDebug } = props
+    const { tasks, fromDate, addFromDate, updateTask, openAddTaskModal, openEditTaskModal, setDebug } = props
 
     const dragStart = (e: any, task: any, task_start_no: any, task_row_span: any) => {
         const grasp_no = task_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / task_row_span))
@@ -64,7 +65,7 @@ const Calendar: FC<Props> = (props) => {
                     .map((diff) => {
                         const date = fromDate.add(diff, 'd')
                         const dateRanges = createDateRanges(date.format('YYYY-MM-DD'), hours)
-                        return createCellElements(date.format(`YYYY.MM.DD(ddd)`), tasks, dateRanges, dateRanges.length * diff + 1, dragStart, drop, openEditTaskModal, null)
+                        return createCellElements(date.format(`YYYY.MM.DD(ddd)`), tasks, dateRanges, dateRanges.length * diff + 1, dragStart, drop, openAddTaskModal, openEditTaskModal, null)
                     })
             }
             <div
@@ -77,7 +78,7 @@ const Calendar: FC<Props> = (props) => {
     )
 }
 
-const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, openEditTaskModal: any, setDebug: any) => {
+const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, openAddTaskModal: any, openEditTaskModal: any, setDebug: any) => {
     // const dbg: any[] = []
     // let dbg = null
 
@@ -113,6 +114,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                 const start_date = lower_date.add((no - lower_no) * 30, 'm')
                 return (
                     <div className="border border-gray-400 flex items-center justify-center focus:border-blue-500"
+                        onDoubleClick={() => openAddTaskModal({ id: 0, name: '', start_date, end_date: start_date.add(30, 'm') })}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => drop(e, no, start_date, 1)}
                         tabIndex={0}
@@ -189,6 +191,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                         emptyDivs.push(
                             <div
                                 className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} focus:border-blue-500`}
+                                onDoubleClick={() => openAddTaskModal({ id: 0, name: '', start_date, end_date: start_date.add(30, 'm') })}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={(e) => drop(e, no, start_date, 1)}
                                 tabIndex={0}
