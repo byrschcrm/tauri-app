@@ -1,8 +1,13 @@
 import "./App.css";
 import { FC } from 'react';
+import Modal from "./Modal";
+import dayjs from "dayjs";
+import ja from 'dayjs/locale/ja';
+dayjs.locale(ja);
 
 type Props = {
     task: any
+    datePatterns: string[]
     isOpen: boolean
     onEdit: (task: any) => void
     onOk: () => void
@@ -10,13 +15,10 @@ type Props = {
 }
 
 const TaskModal: FC<Props> = (props) => {
-    const { task, isOpen, onEdit, onOk, onClose } = props
+    const { task, datePatterns, isOpen, onEdit, onOk, onClose } = props
 
     return (
-        <div
-            className={`flex items-center justify-center fixed top-0 left-0 w-full h-full bg-black/70 ${isOpen ? '' : 'hidden'}`}
-            onClick={onClose}
-        >
+        <Modal isOpen={isOpen} onClose={onClose}>
             <div
                 className="divide-y divide-gray-300 p-2 bg-white rounded"
                 onClick={(e) => e.stopPropagation()}
@@ -36,10 +38,14 @@ const TaskModal: FC<Props> = (props) => {
                             <input className="p-0" value={task.name} onChange={(e) => onEdit({ ...task, name: e.target.value })} />
                         </div>
                         <div className="border border-gray-400">
-                            <select></select>
+                            <select onChange={(e) => onEdit({ ...task, start_date: e.target.value ? dayjs(e.target.value) : null })}>
+                                {datePatterns.map((dp) => <option key={dp} selected={task.start_date?.isSame(dp)}>{dp}</option>)}
+                            </select>
                         </div>
                         <div className="border border-gray-400">
-                            <select></select>
+                            <select onChange={(e) => onEdit({ ...task, end_date: e.target.value ? dayjs(e.target.value) : null })}>
+                                {datePatterns.map((dp) => <option key={dp} selected={task.end_date?.isSame(dp)}>{dp}</option>)}
+                            </select>
                         </div>
                     </div>
                     <div className="flex justify-end gap-1">
@@ -48,7 +54,7 @@ const TaskModal: FC<Props> = (props) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Modal>
     )
 }
 

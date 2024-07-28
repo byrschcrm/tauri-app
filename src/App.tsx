@@ -1,5 +1,5 @@
 import "./App.css";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Calendar from "./Calendar"
 import TaskList from "./TaskList";
 import TaskModal from "./TaskModal";
@@ -36,10 +36,6 @@ function App() {
   const [modalTask, setModalTask] = useState(emptyModalTask)
   const [isOpenTaskModal, setIsOpenTaskModal] = useState(false)
 
-  // useEffect(() => {
-  //   document.body.style.overflow = "hidden"
-  // }, [])
-
   const [debug, setDebug] = useState<any>(null)
 
   return (
@@ -58,6 +54,7 @@ function App() {
       <TaskModal
         isOpen={isOpenTaskModal}
         task={modalTask}
+        datePatterns={createDatePatterns()}
         onEdit={(task) => {
           setModalTask(task)
         }}
@@ -88,6 +85,43 @@ const getTasks = () => {
     { id: 6, name: 'task3', start_date: dayjs('2024-07-25 10:30:00'), end_date: dayjs('2024-07-25 11:00:00') },
     { id: 7, name: 'task4', start_date: dayjs('2024-07-25 11:00:00'), end_date: dayjs('2024-07-25 12:00:00') },
     { id: 8, name: 'タスク4', start_date: null, end_date: null },
+  ]
+}
+
+const createDatePatterns = () => [''].concat(createYmdPatterns().flatMap((ymd) => createHmsPatterns().map((hms) => `${ymd} ${hms}`)))
+
+const createYmdPatterns = () => {
+  return [
+    '2024-07-21',
+    '2024-07-22',
+    '2024-07-23',
+    '2024-07-24',
+    '2024-07-25',
+    '2024-07-26',
+    '2024-07-27',
+  ]
+}
+
+const createHmsPatterns = () => {
+  return [
+    '09:00:00',
+    '09:30:00',
+    '10:00:00',
+    '10:30:00',
+    '11:00:00',
+    '11:30:00',
+    '12:00:00',
+    '12:30:00',
+    '13:00:00',
+    '13:30:00',
+    '14:00:00',
+    '14:30:00',
+    '15:00:00',
+    '15:30:00',
+    '16:00:00',
+    '16:30:00',
+    '17:00:00',
+    '17:30:00',
   ]
 }
 
