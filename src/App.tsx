@@ -47,7 +47,7 @@ function App() {
       <div>
         TaskList
       </div>
-      <TaskList tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} />
+      <TaskList tasks={tasks} datePatterns={createDatePatterns()} updateTask={updateTask} deleteTask={deleteTask} />
       <div className="flex justify-end">
         <button className="text-white bg-blue-500" onClick={() => setIsOpenTaskModal(true)}>登録</button>
       </div>
