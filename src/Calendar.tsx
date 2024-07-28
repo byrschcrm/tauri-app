@@ -111,10 +111,10 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                 const no = lower_no + tasks2.reduce((acc, ts, idx2) => idx2 < idx ? acc + ts.length : acc, 0)
                 const start_date = lower_date.add((no - lower_no) * 30, 'm')
                 return (
-                    <div className="border border-gray-400 flex items-center justify-center"
-                        draggable={true}
+                    <div className="border border-gray-400 flex items-center justify-center focus:border-blue-500"
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => drop(e, no, start_date, 1)}
+                        tabIndex={0}
                     ></div>
                 )
             } else {
@@ -122,11 +122,12 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                 const task_start_no = lower_no + task.start_date.diff(lower_date, 'm') / 30
                 return (
                     <div
-                        className="border border-gray-400 flex items-center justify-center bg-teal-500 cursor-pointer"
+                        className="border border-gray-400 flex items-center justify-center bg-teal-500 cursor-pointer focus:border-blue-500"
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
                         onDragStart={(e) => dragStart(e, task, task_start_no, 1)}
                         onDrop={(e) => drop(e, task_start_no, task.start_date, 1)}
+                        tabIndex={0}
                     >
                         {task.name}
                     </div>
@@ -163,11 +164,12 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                 const height = getHeight(task_row_span / sg_row_span)
                 return (
                     <div
-                        className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} bg-teal-500 cursor-pointer`}
+                        className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} bg-teal-500 cursor-pointer focus:border-blue-500`}
                         draggable={true}
                         onDragOver={(e) => e.preventDefault()}
                         onDragStart={(e) => dragStart(e, task, task_start_no, task_row_span)}
                         onDrop={(e) => drop(e, task_start_no, task.start_date, task_row_span)}
+                        tabIndex={0}
                     >
                         {task.name}
                     </div>
@@ -183,9 +185,10 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                         const start_date = lower_date.add((no - lower_no) * 30, 'm')
                         emptyDivs.push(
                             <div
-                                className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height}`}
+                                className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} focus:border-blue-500`}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={(e) => drop(e, no, start_date, 1)}
+                                tabIndex={0}
                             >
                             </div>
                         )
