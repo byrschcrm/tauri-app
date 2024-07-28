@@ -32,9 +32,17 @@ function App() {
     setFromDate((prevFromDate) => prevFromDate.add(diff * 7, 'd'))
   }
 
-  const emptyModalTask = { name: '', start_date: null, end_date: null }
-  const [modalTask, setModalTask] = useState(emptyModalTask)
-  const [isOpenTaskModal, setIsOpenTaskModal] = useState(false)
+  const emptyModalTask = { id: 0, name: '', start_date: null, end_date: null }
+
+  const [addModalTask, setAddModalTask] = useState(emptyModalTask)
+  const [isOpenAddTaskModal, setIsOpenAddTaskModal] = useState(false)
+
+  const [editModalTask, setEditModalTask] = useState(emptyModalTask)
+  const [isOpenEditTaskModal, setIsOpenEditTaskModal] = useState(false)
+  const openEditTaskModal = (task: any) => {
+    setEditModalTask(task)
+    setIsOpenEditTaskModal(true)
+  }
 
   const [debug, setDebug] = useState<any>(null)
 
@@ -43,29 +51,48 @@ function App() {
       <div>
         Calendar
       </div>
-      <Calendar tasks={tasks} fromDate={fromDate} addFromDate={addFromDate} updateTask={updateTask} setDebug={setDebug} />
+      <Calendar tasks={tasks} fromDate={fromDate} addFromDate={addFromDate} updateTask={updateTask} openEditTaskModal={openEditTaskModal} setDebug={setDebug} />
       <div>
         TaskList
       </div>
       <TaskList tasks={tasks} datePatterns={createDatePatterns()} updateTask={updateTask} deleteTask={deleteTask} />
       <div className="flex justify-end">
-        <button className="text-white bg-blue-500" onClick={() => setIsOpenTaskModal(true)}>登録</button>
+        <button className="text-white bg-blue-500" onClick={() => setIsOpenAddTaskModal(true)}>登録</button>
       </div>
       <TaskModal
-        isOpen={isOpenTaskModal}
-        task={modalTask}
+        title="タスク登録"
+        task={addModalTask}
         datePatterns={createDatePatterns()}
+        isOpen={isOpenAddTaskModal}
         onEdit={(task) => {
-          setModalTask(task)
+          setAddModalTask(task)
         }}
         onOk={() => {
-          addTask(modalTask)
-          setModalTask(emptyModalTask)
-          setIsOpenTaskModal(false)
+          addTask(addModalTask)
+          setAddModalTask(emptyModalTask)
+          setIsOpenAddTaskModal(false)
         }}
         onClose={() => {
-          setModalTask(emptyModalTask)
-          setIsOpenTaskModal(false)
+          setAddModalTask(emptyModalTask)
+          setIsOpenAddTaskModal(false)
+        }}
+      />
+      <TaskModal
+        title="タスク編集"
+        task={editModalTask}
+        datePatterns={createDatePatterns()}
+        isOpen={isOpenEditTaskModal}
+        onEdit={(task) => {
+          setEditModalTask(task)
+        }}
+        onOk={() => {
+          updateTask(editModalTask)
+          setEditModalTask(emptyModalTask)
+          setIsOpenEditTaskModal(false)
+        }}
+        onClose={() => {
+          setEditModalTask(emptyModalTask)
+          setIsOpenEditTaskModal(false)
         }}
       />
       <div>

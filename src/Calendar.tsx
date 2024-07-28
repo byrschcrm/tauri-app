@@ -19,11 +19,12 @@ type Props = {
     fromDate: dayjs.Dayjs
     addFromDate: any
     updateTask: any
+    openEditTaskModal: any
     setDebug: any
 }
 
 const Calendar: FC<Props> = (props) => {
-    const { tasks, fromDate, addFromDate, updateTask, setDebug } = props
+    const { tasks, fromDate, addFromDate, updateTask, openEditTaskModal, setDebug } = props
 
     const dragStart = (e: any, task: any, task_start_no: any, task_row_span: any) => {
         const grasp_no = task_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / task_row_span))
@@ -63,7 +64,7 @@ const Calendar: FC<Props> = (props) => {
                     .map((diff) => {
                         const date = fromDate.add(diff, 'd')
                         const dateRanges = createDateRanges(date.format('YYYY-MM-DD'), hours)
-                        return createCellElementsX3(date.format(`YYYY.MM.DD(ddd)`), tasks, dateRanges, dateRanges.length * diff + 1, dragStart, drop, null)
+                        return createCellElements(date.format(`YYYY.MM.DD(ddd)`), tasks, dateRanges, dateRanges.length * diff + 1, dragStart, drop, openEditTaskModal, null)
                     })
             }
             <div
@@ -76,7 +77,7 @@ const Calendar: FC<Props> = (props) => {
     )
 }
 
-const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, setDebug: any) => {
+const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, openEditTaskModal: any, setDebug: any) => {
     // const dbg: any[] = []
     // let dbg = null
 
@@ -124,6 +125,7 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                     <div
                         className="border border-gray-400 flex items-center justify-center bg-teal-500 cursor-pointer focus:border-blue-500"
                         draggable={true}
+                        onDoubleClick={() => openEditTaskModal(task)}
                         onDragOver={(e) => e.preventDefault()}
                         onDragStart={(e) => dragStart(e, task, task_start_no, 1)}
                         onDrop={(e) => drop(e, task_start_no, task.start_date, 1)}
@@ -166,6 +168,7 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
                     <div
                         className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} bg-teal-500 cursor-pointer focus:border-blue-500`}
                         draggable={true}
+                        onDoubleClick={() => openEditTaskModal(task)}
                         onDragOver={(e) => e.preventDefault()}
                         onDragStart={(e) => dragStart(e, task, task_start_no, task_row_span)}
                         onDrop={(e) => drop(e, task_start_no, task.start_date, task_row_span)}

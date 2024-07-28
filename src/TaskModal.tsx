@@ -6,6 +6,7 @@ import ja from 'dayjs/locale/ja';
 dayjs.locale(ja);
 
 type Props = {
+    title: string
     task: any
     datePatterns: string[]
     isOpen: boolean
@@ -15,7 +16,7 @@ type Props = {
 }
 
 const TaskModal: FC<Props> = (props) => {
-    const { task, datePatterns, isOpen, onEdit, onOk, onClose } = props
+    const { title, task, datePatterns, isOpen, onEdit, onOk, onClose } = props
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -24,7 +25,7 @@ const TaskModal: FC<Props> = (props) => {
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between pb-2">
-                    <div className="mt-2">タスク登録</div>
+                    <div className="mt-2">{title}</div>
                     <button className="pt-1 pb-1 pl-3 pr-3" onClick={onClose}>×</button>
                 </div>
                 <div className="flex flex-col gap-2 pt-2">
@@ -35,16 +36,16 @@ const TaskModal: FC<Props> = (props) => {
                         <div className="border border-gray-400 text-center bg-slate-200">開始時刻</div>
                         <div className="border border-gray-400 text-center bg-slate-200">終了時刻</div>
                         <div className="border border-gray-400">
-                            <input className="p-0" value={task.name} onChange={(e) => onEdit({ ...task, name: e.target.value })} />
+                            <input className="p-0" value={task?.name} onChange={(e) => onEdit({ ...task, name: e.target.value })} />
                         </div>
                         <div className="border border-gray-400">
                             <select onChange={(e) => onEdit({ ...task, start_date: e.target.value ? dayjs(e.target.value) : null })}>
-                                {datePatterns.map((dp) => <option key={dp} selected={task.start_date?.isSame(dp)}>{dp}</option>)}
+                                {datePatterns.map((dp) => <option key={dp} selected={task?.start_date?.isSame(dp)}>{dp}</option>)}
                             </select>
                         </div>
                         <div className="border border-gray-400">
                             <select onChange={(e) => onEdit({ ...task, end_date: e.target.value ? dayjs(e.target.value) : null })}>
-                                {datePatterns.map((dp) => <option key={dp} selected={task.end_date?.isSame(dp)}>{dp}</option>)}
+                                {datePatterns.map((dp) => <option key={dp} selected={task?.end_date?.isSame(dp)}>{dp}</option>)}
                             </select>
                         </div>
                     </div>
