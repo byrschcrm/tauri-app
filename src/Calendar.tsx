@@ -48,19 +48,20 @@ const Calendar: FC<Props> = (props) => {
             <div className="flex items-center justify-end row-span-2 text-right">11:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">12:00</div>
             <div className="flex items-center justify-end row-span-2 text-right">13:00</div>
-            {createCellElementsX3('2024.07.21(日)', tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, dragStart, drop, setDebug)}
-            {createCellElementsX3('2024.07.22(月)', tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, dragStart, drop, setDebug)}
-            {createCellElementsX3('2024.07.23(火)', tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, dragStart, drop, setDebug)}
-            {createCellElementsX3('2024.07.24(水)', tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, dragStart, drop, setDebug)}
-            {createCellElementsX3('2024.07.25(木)', tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, dragStart, drop, setDebug)}
-            {createCellElementsX3('2024.07.26(金)', tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, dragStart, drop, setDebug)}
-            {createCellElementsX3('2024.07.27(土)', tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, dragStart, drop, setDebug)}
+            {createCellElementsX3('2024.07.21(日)', tasks, createDateRanges('2024-07-21'), 9 * 0 + 1, dragStart, drop, null)}
+            {createCellElementsX3('2024.07.22(月)', tasks, createDateRanges('2024-07-22'), 9 * 1 + 1, dragStart, drop, null)}
+            {createCellElementsX3('2024.07.23(火)', tasks, createDateRanges('2024-07-23'), 9 * 2 + 1, dragStart, drop, null)}
+            {createCellElementsX3('2024.07.24(水)', tasks, createDateRanges('2024-07-24'), 9 * 3 + 1, dragStart, drop, null)}
+            {createCellElementsX3('2024.07.25(木)', tasks, createDateRanges('2024-07-25'), 9 * 4 + 1, dragStart, drop, null)}
+            {createCellElementsX3('2024.07.26(金)', tasks, createDateRanges('2024-07-26'), 9 * 5 + 1, dragStart, drop, null)}
+            {createCellElementsX3('2024.07.27(土)', tasks, createDateRanges('2024-07-27'), 9 * 6 + 1, dragStart, drop, null)}
         </div>
     )
 }
 
 const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, setDebug: any) => {
     // const dbg: any[] = []
+    // let dbg = null
 
     // [task1], [], [task2], [task2, task3], [task2, task4], [task4], [], ...
     const tasks1 = dateRanges.map((dateRange: any) => {
@@ -87,7 +88,7 @@ const createCellElementsX3 = (ymd_caption: string, allTasks: any[], dateRanges: 
     // [<div>]
     const lower_date = dateRanges[0].from
     const divs = tasks2.map((tasksList: any[], idx) => {
-        if (tasksList.length === 1) {
+        if (tasksList.length === 1 && (tasksList[0].length === 0 || tasksList[0].length === 1)) {
             const tasks = tasksList[0]
             if (tasks.length === 0) {
                 const no = lower_no + tasks2.reduce((acc, ts, idx2) => idx2 < idx ? acc + ts.length : acc, 0)
