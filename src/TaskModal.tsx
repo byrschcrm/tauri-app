@@ -1,5 +1,6 @@
 import "./App.css";
 import { FC } from 'react';
+import InputDate from './InputDate';
 import Modal from "./Modal";
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
@@ -8,7 +9,8 @@ dayjs.locale(ja);
 type Props = {
     title: string
     task: any
-    datePatterns: string[]
+    ymdPatterns: string[]
+    hmsPatterns: string[]
     isOpen: boolean
     onEdit: (task: any) => void
     onOk: () => void
@@ -16,7 +18,7 @@ type Props = {
 }
 
 const TaskModal: FC<Props> = (props) => {
-    const { title, task, datePatterns, isOpen, onEdit, onOk, onClose } = props
+    const { title, task, ymdPatterns, hmsPatterns, isOpen, onEdit, onOk, onClose } = props
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -39,14 +41,10 @@ const TaskModal: FC<Props> = (props) => {
                             <input className="p-0" value={task?.name} onChange={(e) => onEdit({ ...task, name: e.target.value })} />
                         </div>
                         <div className="border border-gray-400">
-                            <select onChange={(e) => onEdit({ ...task, start_date: e.target.value ? dayjs(e.target.value) : null })}>
-                                {datePatterns.map((dp) => <option key={dp} selected={task?.start_date?.isSame(dp)}>{dp}</option>)}
-                            </select>
+                            <InputDate date={task.start_date} ymdPatterns={ymdPatterns} hmsPatterns={hmsPatterns} onChange={(date) => onEdit({ ...task, start_date: date })} />
                         </div>
                         <div className="border border-gray-400">
-                            <select onChange={(e) => onEdit({ ...task, end_date: e.target.value ? dayjs(e.target.value) : null })}>
-                                {datePatterns.map((dp) => <option key={dp} selected={task?.end_date?.isSame(dp)}>{dp}</option>)}
-                            </select>
+                            <InputDate date={task.end_date} ymdPatterns={ymdPatterns} hmsPatterns={hmsPatterns} onChange={(date) => onEdit({ ...task, end_date: date })} />
                         </div>
                     </div>
                     <div className="flex justify-end gap-1">

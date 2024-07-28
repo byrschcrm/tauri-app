@@ -1,18 +1,20 @@
 import "./App.css";
 import { FC } from 'react';
+import InputDate from './InputDate';
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
 dayjs.locale(ja);
 
 type Props = {
     tasks: any[]
-    datePatterns: string[]
+    ymdPatterns: string[]
+    hmsPatterns: string[]
     updateTask: any
     deleteTask: any
 }
 
 const TaskList: FC<Props> = (props) => {
-    const { tasks, datePatterns, updateTask, deleteTask } = props
+    const { tasks, ymdPatterns, hmsPatterns, updateTask, deleteTask } = props
 
     const dragStart = (e: any, task: any) => {
         e.dataTransfer.setData('text', JSON.stringify({ task }))
@@ -27,7 +29,7 @@ const TaskList: FC<Props> = (props) => {
 
     return (
         <div
-            className="grid grid-cols-[1fr_2fr_2fr_2fr_1fr]"
+            className="grid grid-cols-[1fr_2fr_3fr_3fr_1fr]"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => drop(e)}
         >
@@ -49,14 +51,10 @@ const TaskList: FC<Props> = (props) => {
                             <input className="p-0" value={task.name} onChange={(e) => updateTask({ id: task.id, name: e.target.value })} />
                         </div>
                         <div className="border border-gray-400">
-                            <select onChange={(e) => updateTask({ id: task.id, start_date: e.target.value ? dayjs(e.target.value) : null })}>
-                                {datePatterns.map((dp) => <option key={dp} selected={task.start_date?.isSame(dp)}>{dp}</option>)}
-                            </select>
+                            <InputDate date={task.start_date} ymdPatterns={ymdPatterns} hmsPatterns={hmsPatterns} onChange={(date) => updateTask({ id: task.id, start_date: date })} />
                         </div>
                         <div className="border border-gray-400">
-                            <select onChange={(e) => updateTask({ id: task.id, end_date: e.target.value ? dayjs(e.target.value) : null })}>
-                                {datePatterns.map((dp) => <option key={dp} selected={task.end_date?.isSame(dp)}>{dp}</option>)}
-                            </select>
+                            <InputDate date={task.end_date} ymdPatterns={ymdPatterns} hmsPatterns={hmsPatterns} onChange={(date) => updateTask({ id: task.id, end_date: date })} />
                         </div>
                         <div className="bg-red-500 border border-gray-400 cursor-pointer" onClick={() => deleteTask(task.id)}></div>
                     </>

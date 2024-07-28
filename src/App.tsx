@@ -81,14 +81,15 @@ function App() {
       <div>
         TaskList
       </div>
-      <TaskList tasks={tasks} datePatterns={createDatePatterns()} updateTask={updateTask} deleteTask={deleteTask} />
+      <TaskList tasks={tasks} ymdPatterns={createYmdPatterns()} hmsPatterns={createHmsPatterns()} updateTask={updateTask} deleteTask={deleteTask} />
       <div className="flex justify-end">
         <button className="text-white bg-blue-500" onClick={() => setIsOpenAddTaskModal(true)}>登録</button>
       </div>
       <TaskModal
         title="タスク登録"
         task={addModalTask}
-        datePatterns={createDatePatterns()}
+        ymdPatterns={createYmdPatterns()}
+        hmsPatterns={createHmsPatterns()}
         isOpen={isOpenAddTaskModal}
         onEdit={(task) => {
           setAddModalTask(task)
@@ -106,7 +107,8 @@ function App() {
       <TaskModal
         title="タスク編集"
         task={editModalTask}
-        datePatterns={createDatePatterns()}
+        ymdPatterns={createYmdPatterns()}
+        hmsPatterns={createHmsPatterns()}
         isOpen={isOpenEditTaskModal}
         onEdit={(task) => {
           setEditModalTask(task)
@@ -140,8 +142,6 @@ const getTasks = () => {
     { id: 8, name: 'タスク4', start_date: null, end_date: null },
   ]
 }
-
-const createDatePatterns = () => [''].concat(createYmdPatterns().flatMap((ymd) => createHmsPatterns().map((hms) => `${ymd} ${hms}`)))
 
 const createYmdPatterns = () => {
   return [
