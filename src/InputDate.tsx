@@ -1,5 +1,5 @@
 import "./App.css";
-import { FC } from 'react';
+import React from 'react';
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
 dayjs.locale(ja);
@@ -11,7 +11,7 @@ type Props = {
     onChange: (date: dayjs.Dayjs | null) => void
 }
 
-const InputDate: FC<Props> = (props) => {
+const InputDate: React.FC<Props> = (props) => {
     const { date, ymdPatterns, hmsPatterns, onChange } = props
     const isEmpty = date === null
     const emptyText = '-------------'

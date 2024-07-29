@@ -1,5 +1,5 @@
 import "./App.css";
-import { FC } from 'react';
+import React from 'react';
 import InputDate from './InputDate';
 import Modal from "./Modal";
 import dayjs from "dayjs";
@@ -17,7 +17,7 @@ type Props = {
     onClose: () => void
 }
 
-const TaskModal: FC<Props> = (props) => {
+const TaskModal: React.FC<Props> = (props) => {
     const { title, task, ymdPatterns, hmsPatterns, isOpen, onEdit, onOk, onClose } = props
 
     return (
