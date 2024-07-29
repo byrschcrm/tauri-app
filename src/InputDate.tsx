@@ -14,14 +14,15 @@ type Props = {
 const InputDate: FC<Props> = (props) => {
     const { date, ymdPatterns, hmsPatterns, onChange } = props
     const isEmpty = date === null
+    const emptyText = '-------------'
 
     return (
         <div className="flex gap-1">
-            <select disabled={isEmpty} onChange={(e) => date && onChange(dayjs(`${e.target.value} ${date.format('HH:mm:ss')}`))}>
-                {isEmpty ? <option>{'-------------'}</option> : ymdPatterns.map((p) => <option key={p} selected={p === date.format('YYYY-MM-DD')}>{p}</option>)}
+            <select value={date ? date.format('YYYY-MM-DD') : emptyText} disabled={isEmpty} onChange={(e) => date && onChange(dayjs(`${e.target.value} ${date.format('HH:mm:ss')}`))}>
+                {isEmpty ? <option>{emptyText}</option> : ymdPatterns.map((p) => <option key={p}>{p}</option>)}
             </select>
-            <select disabled={isEmpty} onChange={(e) => date && onChange(dayjs(`${date.format('YYYY-MM-DD')} ${e.target.value}`))}>
-                {isEmpty ? <option>{'-------------'}</option> : hmsPatterns.map((p) => <option key={p} selected={p === date?.format('HH:mm:ss')}>{p}</option>)}
+            <select value={date ? date.format('HH:mm:ss') : emptyText} disabled={isEmpty} onChange={(e) => date && onChange(dayjs(`${date.format('YYYY-MM-DD')} ${e.target.value}`))}>
+                {isEmpty ? <option>{emptyText}</option> : hmsPatterns.map((p) => <option key={p}>{p}</option>)}
             </select>
             <div>
                 <label><input type="checkbox" checked={isEmpty} onChange={(e) => onChange(e.target.checked ? null : dayjs(`${ymdPatterns[0]} ${hmsPatterns[0]}`))} />Empty</label>
