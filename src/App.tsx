@@ -1,38 +1,28 @@
 import "./App.css";
 import { useEffect, useState } from 'react';
+import useDataHistory from "./useDataHistory"
 import Calendar from "./Calendar"
 import TaskList from "./TaskList";
 import TaskModal from "./TaskModal";
 import dayjs from "dayjs";
 
 function App() {
-  const [tasksHistory, setTasksHistory] = useState<any[][]>([getTasks()])
-  const [curTasksIdx, setCurTasksIdx] = useState(0)
-  const tasks = tasksHistory[curTasksIdx]
+  const [tasks, { push, undo, redo }] = useDataHistory(getTasks())
 
   const addTask = (partTask: any) => {
-    setTasksHistory((prevHistory) => {
-      const new_id = prevHistory[curTasksIdx].reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
-      const newTasks = prevHistory[curTasksIdx].concat([{ id: new_id, ...partTask }])
-      return prevHistory.slice(0, curTasksIdx + 1).concat([newTasks])
-    })
-    setCurTasksIdx((prevIdx) => prevIdx + 1)
+    const new_id = tasks.reduce((id: any, task: any) => id >= task.id ? id : task.id, 0) + 1
+    const newTasks = tasks.concat([{ id: new_id, ...partTask }])
+    push(newTasks)
   }
 
   const updateTask = (partTask: any) => {
-    setTasksHistory((prevHistory) => {
-      const newTasks = prevHistory[curTasksIdx].map((task) => task.id === partTask.id ? { ...task, ...partTask } : task)
-      return prevHistory.slice(0, curTasksIdx + 1).concat([newTasks])
-    })
-    setCurTasksIdx((prevIdx) => prevIdx + 1)
+    const newTasks = tasks.map((task: any) => task.id === partTask.id ? { ...task, ...partTask } : task)
+    push(newTasks)
   }
 
   const deleteTask = (id: any) => {
-    setTasksHistory((prevHistory) => {
-      const newTasks = prevHistory[curTasksIdx].filter((task) => task.id !== id)
-      return prevHistory.slice(0, curTasksIdx + 1).concat([newTasks])
-    })
-    setCurTasksIdx((prevIdx) => prevIdx + 1)
+    const newTasks = tasks.filter((task: any) => task.id !== id)
+    push(newTasks)
   }
 
   const [fromDate, setFromDate] = useState<dayjs.Dayjs>(dayjs('2024-07-21'))
@@ -61,14 +51,14 @@ function App() {
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-        setCurTasksIdx((prevIdx) => prevIdx > 0 ? prevIdx - 1 : prevIdx)
+        undo()
       } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
-        setCurTasksIdx((prevIdx) => prevIdx < tasksHistory.length - 1 ? prevIdx + 1 : prevIdx)
+        redo()
       }
     }
     window.addEventListener('keydown', listener)
     return () => window.removeEventListener('keydown', listener)
-  }, [tasksHistory])
+  }, [undo, redo])
 
   const [debug, setDebug] = useState<any>(null)
 
