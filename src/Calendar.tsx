@@ -1,5 +1,6 @@
 import "./App.css";
 import { FC } from 'react';
+import * as cm from "./Common"
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -47,22 +48,22 @@ const Calendar: FC<Props> = (props) => {
         }
     }
 
-    const hours = [9, 10, 11, 12, 13, 14, 15, 16, 17]
+    const hours = cm.createNumRange(9, 17)
 
     return (
-        <div className={`grid grid-flow-col ${getGridRows(hours.length * 2)}`}>
+        <div className={`grid grid-flow-col ${cm.getGridRows(hours.length * 2)}`}>
             <div
-                className={`flex items-center justify-center ${getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
+                className={`flex items-center justify-center ${cm.getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
                 onClick={() => addFromDate(-1)}
                 onDragEnter={() => addFromDate(-1)}
             >
                 ＜
             </div>
             {
-                hours.map((hour) => <div className="flex items-center justify-end row-span-2 text-right">{`${padLeftZero(hour, 2)}:00`}</div>)
+                hours.map((hour) => <div className="flex items-center justify-end row-span-2 text-right">{`${cm.padLeftZero(hour, 2)}:00`}</div>)
             }
             {
-                [0, 1, 2, 3, 4, 5, 6]
+                cm.createNumRange(0, 6)
                     .map((diff) => {
                         const date = fromDate.add(diff, 'd')
                         const dateRanges = createDateRanges(date.format('YYYY-MM-DD'), hours)
@@ -70,7 +71,7 @@ const Calendar: FC<Props> = (props) => {
                     })
             }
             <div
-                className={`flex items-center justify-center ${getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
+                className={`flex items-center justify-center ${cm.getRowSpan(hours.length * 2)} text-right bg-cyan-100 cursor-pointer`}
                 onClick={() => addFromDate(1)}
                 onDragEnter={() => addFromDate(1)}
             >
@@ -146,13 +147,13 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
             const sg_upper_date = tasksList[tasksList.length - 1][0].end_date
             const sg_lower_no = lower_no + tasksList[0][0].start_date.diff(lower_date, 'm') / 30
             const sg_upper_no = lower_no + sg_upper_date.diff(lower_date, 'm') / 30 - 1
-            const width = getWidth(1 / sg_col_span)
+            const width = cm.getWidth(1 / sg_col_span)
             const filledNos = [...Array(sg_col_span)].map((_) => new Set<number>([]))
             const filledDivs = tasks.map((task) => {
                 const task_start_no = lower_no + task.start_date.diff(lower_date, 'm') / 30
                 const task_end_no = lower_no + task.end_date.diff(lower_date, 'm') / 30 - 1
                 const task_nos = new Set<number>([])
-                for (let no = task_start_no; no <= task_end_no; no++) {
+                for (const no of cm.createNumRange(task_start_no, task_end_no)) {
                     task_nos.add(no)
                 }
                 let x = null
@@ -161,13 +162,13 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                         for (const no of task_nos) {
                             filledNos[col_no].add(no)
                         }
-                        x = getX(col_no / sg_col_span)
+                        x = cm.getX(col_no / sg_col_span)
                         break
                     }
                 }
-                const y = getY((task_start_no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
+                const y = cm.getY((task_start_no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
                 const task_row_span = tasksList.flat().reduce((acc, t) => t.id === task.id ? acc + 1 : acc, 0)
-                const height = getHeight(task_row_span / sg_row_span)
+                const height = cm.getHeight(task_row_span / sg_row_span)
                 return (
                     <div
                         className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} bg-teal-500 cursor-pointer focus:border-blue-500`}
@@ -184,11 +185,11 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
             })
             const emptyDivs = []
             for (let col_no = 0; col_no < filledNos.length; col_no++) {
-                for (let no = sg_lower_no; no <= sg_upper_no; no++) {
+                for (const no of cm.createNumRange(sg_lower_no, sg_upper_no)) {
                     if (!filledNos[col_no].has(no)) {
-                        const x = getX(col_no / sg_col_span)
-                        const y = getY((no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
-                        const height = getHeight(1 / sg_row_span)
+                        const x = cm.getX(col_no / sg_col_span)
+                        const y = cm.getY((no - sg_lower_no) / (sg_upper_no - sg_lower_no + 1))
+                        const height = cm.getHeight(1 / sg_row_span)
                         const start_date = lower_date.add((no - lower_no) * 30, 'm')
                         emptyDivs.push(
                             <div
@@ -204,7 +205,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                 }
             }
             return (
-                <div className={`relative ${getRowSpan(sg_row_span)}`}>
+                <div className={`relative ${cm.getRowSpan(sg_row_span)}`}>
                     {filledDivs}
                     {emptyDivs}
                 </div>
@@ -233,227 +234,9 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
 
 const createDateRanges = (ymd: string, hours: number[]) => {
     return hours.flatMap((hour) => [
-        { from: dayjs(`${ymd} ${padLeftZero(hour, 2)}:00:00`), to: dayjs(`${ymd} ${padLeftZero(hour, 2)}:30:00`) },
-        { from: dayjs(`${ymd} ${padLeftZero(hour, 2)}:30:00`), to: dayjs(`${ymd} ${padLeftZero(hour + 1, 2)}:00:00`) },
+        { from: dayjs(`${ymd} ${cm.padLeftZero(hour, 2)}:00:00`), to: dayjs(`${ymd} ${cm.padLeftZero(hour, 2)}:30:00`) },
+        { from: dayjs(`${ymd} ${cm.padLeftZero(hour, 2)}:30:00`), to: dayjs(`${ymd} ${cm.padLeftZero(hour + 1, 2)}:00:00`) },
     ]).slice(0, hours.length * 2 - 1)
-}
-
-const getGridRows = (num: any) => {
-    switch (num) {
-        case 1:
-            return 'grid-rows-1'
-        case 2:
-            return 'grid-rows-2'
-        case 3:
-            return 'grid-rows-3'
-        case 4:
-            return 'grid-rows-4'
-        case 5:
-            return 'grid-rows-5'
-        case 6:
-            return 'grid-rows-6'
-        case 7:
-            return 'grid-rows-7'
-        case 8:
-            return 'grid-rows-8'
-        case 9:
-            return 'grid-rows-9'
-        case 10:
-            return 'grid-rows-10'
-        case 11:
-            return 'grid-rows-11'
-        case 12:
-            return 'grid-rows-12'
-        case 13:
-            return 'grid-rows-13'
-        case 14:
-            return 'grid-rows-14'
-        case 15:
-            return 'grid-rows-15'
-        case 16:
-            return 'grid-rows-16'
-        case 17:
-            return 'grid-rows-17'
-        case 18:
-            return 'grid-rows-18'
-        case 19:
-            return 'grid-rows-19'
-        case 20:
-            return 'grid-rows-20'
-        default:
-            return ''
-    }
-}
-
-const getRowSpan = (num: any) => {
-    switch (num) {
-        case 1:
-            return 'row-span-1'
-        case 2:
-            return 'row-span-2'
-        case 3:
-            return 'row-span-3'
-        case 4:
-            return 'row-span-4'
-        case 5:
-            return 'row-span-5'
-        case 6:
-            return 'row-span-6'
-        case 7:
-            return 'row-span-7'
-        case 8:
-            return 'row-span-8'
-        case 9:
-            return 'row-span-9'
-        case 10:
-            return 'row-span-10'
-        case 11:
-            return 'row-span-11'
-        case 12:
-            return 'row-span-12'
-        case 13:
-            return 'row-span-13'
-        case 14:
-            return 'row-span-14'
-        case 15:
-            return 'row-span-15'
-        case 16:
-            return 'row-span-16'
-        case 17:
-            return 'row-span-17'
-        case 18:
-            return 'row-span-18'
-        case 19:
-            return 'row-span-19'
-        case 20:
-            return 'row-span-20'
-        default:
-            return ''
-    }
-}
-
-const getWidth = (num: number) => {
-    switch (num) {
-        case 1:
-            return 'w-full'
-        case 1 / 2:
-            return 'w-1/2'
-        case 1 / 3:
-            return 'w-1/3'
-        case 1 / 4:
-            return 'w-1/4'
-        case 1 / 5:
-            return 'w-1/5'
-        case 1 / 6:
-            return 'w-1/6'
-        default:
-            return ''
-    }
-}
-
-const getHeight = (num: number) => {
-    switch (num) {
-        case 1:
-            return 'h-full'
-        case 1 / 2:
-            return 'h-1/2'
-        case 1 / 3:
-            return 'h-1/3'
-        case 2 / 3:
-            return 'h-2/3'
-        case 1 / 4:
-            return 'h-1/4'
-        case 3 / 4:
-            return 'h-3/4'
-        case 1 / 5:
-            return 'h-1/5'
-        case 2 / 5:
-            return 'h-2/5'
-        case 3 / 5:
-            return 'h-3/5'
-        case 4 / 5:
-            return 'h-4/5'
-        case 1 / 6:
-            return 'h-1/6'
-        case 2 / 6:
-            return 'h-2/6'
-        case 4 / 6:
-            return 'h-4/6'
-        case 5 / 6:
-            return 'h-5/6'
-        default:
-            return ''
-    }
-}
-
-const getX = (num: number) => {
-    switch (num) {
-        case 0:
-            return 'inset-x-0'
-        case 1 / 2:
-            return 'inset-x-1/2'
-        case 1 / 3:
-            return 'inset-x-1/3'
-        case 2 / 3:
-            return 'inset-x-2/3'
-        case 1 / 4:
-            return 'inset-x-1/4'
-        case 3 / 4:
-            return 'inset-x-3/4'
-        case 1 / 5:
-            return 'inset-x-1/5'
-        case 2 / 5:
-            return 'inset-x-2/5'
-        case 3 / 5:
-            return 'inset-x-3/5'
-        case 4 / 5:
-            return 'inset-x-4/5'
-        case 1 / 6:
-            return 'inset-x-1/6'
-        case 2 / 6:
-            return 'inset-x-2/6'
-        case 4 / 6:
-            return 'inset-x-4/6'
-        case 5 / 6:
-            return 'inset-x-5/6'
-        default:
-            return ''
-    }
-}
-
-const getY = (num: number) => {
-    switch (num) {
-        case 0:
-            return 'inset-y-0'
-        case 1 / 2:
-            return 'inset-y-1/2'
-        case 1 / 3:
-            return 'inset-y-1/3'
-        case 2 / 3:
-            return 'inset-y-2/3'
-        case 1 / 4:
-            return 'inset-y-1/4'
-        case 3 / 4:
-            return 'inset-y-3/4'
-        case 1 / 5:
-            return 'inset-y-1/5'
-        case 2 / 5:
-            return 'inset-y-2/5'
-        case 3 / 5:
-            return 'inset-y-3/5'
-        case 4 / 5:
-            return 'inset-y-4/5'
-        case 1 / 6:
-            return 'inset-y-1/6'
-        case 2 / 6:
-            return 'inset-y-2/6'
-        case 4 / 6:
-            return 'inset-y-4/6'
-        case 5 / 6:
-            return 'inset-y-5/6'
-        default:
-            return ''
-    }
 }
 
 const addDate = (date: any, minutes: number, date_type: DateType) => {
@@ -480,10 +263,6 @@ const addDate = (date: any, minutes: number, date_type: DateType) => {
     }
 
     return ret
-}
-
-const padLeftZero = (num: number, len: number) => {
-    return (Array(len).join('0') + num).slice(-len);
 }
 
 export default Calendar
