@@ -1,26 +1,27 @@
 import "./App.css";
 import React from 'react';
 import InputDate from './InputDate';
+import { Task, PartTask } from "./Common"
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
 dayjs.locale(ja);
 
 type Props = {
-    tasks: any[]
+    tasks: Task[]
     ymdPatterns: string[]
     hmsPatterns: string[]
-    updateTask: any
-    deleteTask: any
+    updateTask: (partTask: PartTask) => void
+    deleteTask: (id: number) => void
 }
 
 const TaskList: React.FC<Props> = (props) => {
     const { tasks, ymdPatterns, hmsPatterns, updateTask, deleteTask } = props
 
-    const dragStart = (e: any, task: any) => {
+    const dragStart = (e: React.DragEvent<HTMLDivElement>, task: Task) => {
         e.dataTransfer.setData('text', JSON.stringify({ task }))
     }
 
-    const drop = (e: any) => {
+    const drop = (e: React.DragEvent<HTMLDivElement>) => {
         const { task, grasp_no } = JSON.parse(e.dataTransfer.getData('text'))
         if (grasp_no !== undefined) {
             updateTask({ id: task.id, start_date: null, end_date: null })

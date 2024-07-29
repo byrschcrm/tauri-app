@@ -4,24 +4,25 @@ import useDataHistory from "./useDataHistory"
 import Calendar from "./Calendar"
 import TaskList from "./TaskList";
 import TaskModal from "./TaskModal";
+import { Task, TaskAttr, PartTask } from "./Common"
 import dayjs from "dayjs";
 
 function App() {
   const [tasks, { push, undo, redo }] = useDataHistory(getTasks())
 
-  const addTask = (partTask: any) => {
-    const new_id = tasks.reduce((id: any, task: any) => id >= task.id ? id : task.id, 0) + 1
-    const newTasks = tasks.concat([{ id: new_id, ...partTask }])
+  const addTask = (tastAttr: TaskAttr) => {
+    const new_id = tasks.reduce((id, task) => id >= task.id ? id : task.id, 0) + 1
+    const newTasks = tasks.concat([{ id: new_id, ...tastAttr }])
     push(newTasks)
   }
 
-  const updateTask = (partTask: any) => {
-    const newTasks = tasks.map((task: any) => task.id === partTask.id ? { ...task, ...partTask } : task)
+  const updateTask = (partTask: PartTask) => {
+    const newTasks = tasks.map((task) => task.id === partTask.id ? { ...task, ...partTask } : task)
     push(newTasks)
   }
 
-  const deleteTask = (id: any) => {
-    const newTasks = tasks.filter((task: any) => task.id !== id)
+  const deleteTask = (id: number) => {
+    const newTasks = tasks.filter((task) => task.id !== id)
     push(newTasks)
   }
 
@@ -31,19 +32,19 @@ function App() {
     setFromDate((prevFromDate) => prevFromDate.add(diff * 7, 'd'))
   }
 
-  const emptyModalTask = { id: 0, name: '', start_date: null, end_date: null }
+  const emptyModalTask: Task = { id: 0, name: '', start_date: null, end_date: null }
 
   const [addModalTask, setAddModalTask] = useState(emptyModalTask)
   const [isOpenAddTaskModal, setIsOpenAddTaskModal] = useState(false)
 
-  const openAddTaskModal = (task: any) => {
+  const openAddTaskModal = (task: Task) => {
     setAddModalTask(task)
     setIsOpenAddTaskModal(true)
   }
 
   const [editModalTask, setEditModalTask] = useState(emptyModalTask)
   const [isOpenEditTaskModal, setIsOpenEditTaskModal] = useState(false)
-  const openEditTaskModal = (task: any) => {
+  const openEditTaskModal = (task: Task) => {
     setEditModalTask(task)
     setIsOpenEditTaskModal(true)
   }
@@ -60,7 +61,7 @@ function App() {
     return () => window.removeEventListener('keydown', listener)
   }, [undo, redo])
 
-  const [debug, setDebug] = useState<any>(null)
+  const [debug, setDebug] = useState('')
 
   return (
     <>
@@ -120,7 +121,7 @@ function App() {
   );
 }
 
-const getTasks = () => {
+const getTasks = (): Task[] => {
   return [
     { id: 1, name: 'タスク1', start_date: dayjs('2024-07-22 10:00:00'), end_date: dayjs('2024-07-22 10:30:00') },
     { id: 2, name: 'タスク2', start_date: dayjs('2024-07-24 09:00:00'), end_date: dayjs('2024-07-24 10:00:00') },

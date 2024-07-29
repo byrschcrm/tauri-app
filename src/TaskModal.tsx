@@ -2,17 +2,18 @@ import "./App.css";
 import React from 'react';
 import InputDate from './InputDate';
 import Modal from "./Modal";
+import { Task } from "./Common"
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
 dayjs.locale(ja);
 
 type Props = {
     title: string
-    task: any
+    task: Task
     ymdPatterns: string[]
     hmsPatterns: string[]
     isOpen: boolean
-    onEdit: (task: any) => void
+    onEdit: (task: Task) => void
     onOk: () => void
     onClose: () => void
 }

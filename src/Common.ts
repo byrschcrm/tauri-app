@@ -1,10 +1,32 @@
+import dayjs from "dayjs";
+
+export type RequiredNotNull<T> = {
+    [P in keyof T]: NonNullable<T[P]>
+}
+
+export type Id = {
+    id: number
+}
+
+export type Task = Id & TaskAttr
+
+export type TaskAttr = {
+    name: string
+    start_date: dayjs.Dayjs | null
+    end_date: dayjs.Dayjs | null
+}
+
+export type PartTask = Id & Partial<TaskAttr>
+
+export type FixedTask = RequiredNotNull<Task>
+
 export const createNumRange = (start: number, end: number) => [...Array(end - start + 1)].map((_, idx) => start + idx)
 
 export const padLeftZero = (num: number, len: number) => {
     return (Array(len).join('0') + num).slice(-len);
 }
 
-export const getGridRows = (num: any) => {
+export const getGridRows = (num: number) => {
     switch (num) {
         case 1:
             return 'grid-rows-1'
@@ -51,7 +73,7 @@ export const getGridRows = (num: any) => {
     }
 }
 
-export const getRowSpan = (num: any) => {
+export const getRowSpan = (num: number) => {
     switch (num) {
         case 1:
             return 'row-span-1'

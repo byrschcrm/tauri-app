@@ -1,6 +1,7 @@
 import "./App.css";
 import React from 'react';
 import * as cm from "./Common"
+import { Task, PartTask, FixedTask } from "./Common"
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -15,25 +16,30 @@ const DateType = {
 } as const
 type DateType = typeof DateType[keyof typeof DateType]
 
+type DateRange = {
+    from: dayjs.Dayjs
+    to: dayjs.Dayjs
+}
+
 type Props = {
-    tasks: any[]
+    tasks: Task[]
     fromDate: dayjs.Dayjs
-    addFromDate: any
-    updateTask: any
-    openAddTaskModal: any
-    openEditTaskModal: any
-    setDebug: any
+    addFromDate: (diff: number) => void
+    updateTask: (partTask: PartTask) => void
+    openAddTaskModal: (task: Task) => void
+    openEditTaskModal: (task: Task) => void
+    setDebug: (dbg: string) => void
 }
 
 const Calendar: React.FC<Props> = (props) => {
     const { tasks, fromDate, addFromDate, updateTask, openAddTaskModal, openEditTaskModal, setDebug } = props
 
-    const dragStart = (e: any, task: any, task_start_no: any, task_row_span: any) => {
+    const dragStart = (e: React.DragEvent<HTMLDivElement>, task: Task, task_start_no: number, task_row_span: number) => {
         const grasp_no = task_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / task_row_span))
         e.dataTransfer.setData('text', JSON.stringify({ task, grasp_no }))
     }
 
-    const drop = (e: any, cell_start_no: any, cell_start_date: any, cell_row_span: any) => {
+    const drop = (e: React.DragEvent<HTMLDivElement>, cell_start_no: number, cell_start_date: dayjs.Dayjs, cell_row_span: number) => {
         const { task, grasp_no } = JSON.parse(e.dataTransfer.getData('text'))
         const release_no = cell_start_no + Math.floor(e.nativeEvent.offsetY / (e.currentTarget.clientHeight / cell_row_span))
         if (grasp_no === undefined) {
@@ -67,7 +73,7 @@ const Calendar: React.FC<Props> = (props) => {
                     .map((diff) => {
                         const date = fromDate.add(diff, 'd')
                         const dateRanges = createDateRanges(date.format('YYYY-MM-DD'), hours)
-                        return createCellElements(date.format(`YYYY.MM.DD(ddd)`), tasks, dateRanges, dateRanges.length * diff + 1, dragStart, drop, openAddTaskModal, openEditTaskModal, null)
+                        return createCellElements(date.format(`YYYY.MM.DD(ddd)`), tasks, dateRanges, dateRanges.length * diff + 1, dragStart, drop, openAddTaskModal, openEditTaskModal, setDebug)
                     })
             }
             <div
@@ -81,23 +87,33 @@ const Calendar: React.FC<Props> = (props) => {
     )
 }
 
-const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: any, lower_no: number, dragStart: any, drop: any, openAddTaskModal: any, openEditTaskModal: any, setDebug: any) => {
+const createCellElements = (
+    ymd_caption: string,
+    allTasks: Task[],
+    dateRanges: DateRange[],
+    lower_no: number,
+    dragStart: (e: React.DragEvent<HTMLDivElement>, task: Task, task_start_no: number, task_row_span: number) => void,
+    drop: (e: React.DragEvent<HTMLDivElement>, cell_start_no: number, cell_start_date: dayjs.Dayjs, cell_row_span: number) => void,
+    openAddTaskModal: (task: Task) => void,
+    openEditTaskModal: (task: Task) => void,
+    setDebug: (dbg: string) => void,
+) => {
     // const dbg: any[] = []
     // let dbg = null
 
     // [task1], [], [task2], [task2, task3], [task2, task4], [task4], [], ...
-    const tasks1 = dateRanges.map((dateRange: any) => {
-        return allTasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to))
+    const tasks1 = dateRanges.map((dateRange) => {
+        return allTasks.filter((task) => task.start_date?.isSameOrBefore(dateRange.from) && task.end_date?.isSameOrAfter(dateRange.to)) as FixedTask[]
     })
 
     // [[task1]], [[]], [[task2], [task2, task3], [task2, task4], [task4]], [[]], ...
-    const tasks2: any[] = []
-    let tasksBufs: any[] = []
+    const tasks2: FixedTask[][][] = []
+    let tasksBufs: FixedTask[][] = []
     for (let i = 0; i < tasks1.length; i++) {
         const tasks = tasks1[i]
         if (i === 0) {
             tasksBufs.push(tasks)
-        } else if (tasksBufs.length > 0 && tasks.some((task: any) => tasksBufs[tasksBufs.length - 1].some((buf: any) => buf.id === task.id))) {
+        } else if (tasksBufs.length > 0 && tasks.some((task) => tasksBufs[tasksBufs.length - 1].some((buf) => buf.id === task.id))) {
             tasksBufs.push(tasks)
         } else {
             tasks2.push(tasksBufs)
@@ -109,7 +125,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
 
     // [<div>]
     const lower_date = dateRanges[0].from
-    const divs = tasks2.map((tasksList: any[], idx) => {
+    const divs = tasks2.map((tasksList, idx) => {
         if (tasksList.length === 1 && (tasksList[0].length === 0 || tasksList[0].length === 1)) {
             const tasks = tasksList[0]
             if (tasks.length === 0) {
@@ -235,14 +251,14 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
     )
 }
 
-const createDateRanges = (ymd: string, hours: number[]) => {
+const createDateRanges = (ymd: string, hours: number[]): DateRange[] => {
     return hours.flatMap((hour) => [
         { from: dayjs(`${ymd} ${cm.padLeftZero(hour, 2)}:00:00`), to: dayjs(`${ymd} ${cm.padLeftZero(hour, 2)}:30:00`) },
         { from: dayjs(`${ymd} ${cm.padLeftZero(hour, 2)}:30:00`), to: dayjs(`${ymd} ${cm.padLeftZero(hour + 1, 2)}:00:00`) },
     ]).slice(0, hours.length * 2 - 1)
 }
 
-const addDate = (date: any, minutes: number, date_type: DateType) => {
+const addDate = (date: dayjs.Dayjs, minutes: number, date_type: DateType) => {
     let ret = date
     let cur_minutes = minutes
     const [lower_limit, upper_limit] = date_type === DateType.Start ? ['09:00:00', '17:00:00'] : ['09:30:00', '17:30:00']

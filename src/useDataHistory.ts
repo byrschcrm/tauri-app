@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 const useDataHistory = <T>(initData: T) => {
-    const [dataHistory, setDataHistory] = useState<any[]>([initData])
+    const [dataHistory, setDataHistory] = useState<T[]>([initData])
     const [curIdx, setCurIdx] = useState(0)
 
     const curData = dataHistory[curIdx]
