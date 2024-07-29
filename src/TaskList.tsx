@@ -1,5 +1,5 @@
 import "./App.css";
-import { FC } from 'react';
+import React from 'react';
 import InputDate from './InputDate';
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
@@ -13,7 +13,7 @@ type Props = {
     deleteTask: any
 }
 
-const TaskList: FC<Props> = (props) => {
+const TaskList: React.FC<Props> = (props) => {
     const { tasks, ymdPatterns, hmsPatterns, updateTask, deleteTask } = props
 
     const dragStart = (e: any, task: any) => {
@@ -40,7 +40,7 @@ const TaskList: FC<Props> = (props) => {
             <div className="border border-gray-400 text-center">削除</div>
             {
                 tasks.flatMap((task) =>
-                    <>
+                    <React.Fragment key={task.id}>
                         <div
                             className={`border border-gray-400 ${task.start_date && task.end_date ? '' : 'bg-teal-500 cursor-pointer'}`}
                             draggable={!(task.start_date && task.end_date)}
@@ -57,7 +57,7 @@ const TaskList: FC<Props> = (props) => {
                             <InputDate date={task.end_date} ymdPatterns={ymdPatterns} hmsPatterns={hmsPatterns} onChange={(date) => updateTask({ id: task.id, end_date: date })} />
                         </div>
                         <div className="bg-red-500 border border-gray-400 cursor-pointer" onClick={() => deleteTask(task.id)}></div>
-                    </>
+                    </React.Fragment>
                 )
             }
         </div>

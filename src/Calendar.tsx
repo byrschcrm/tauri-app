@@ -1,5 +1,5 @@
 import "./App.css";
-import { FC } from 'react';
+import React from 'react';
 import * as cm from "./Common"
 import dayjs from "dayjs";
 import ja from 'dayjs/locale/ja';
@@ -25,7 +25,7 @@ type Props = {
     setDebug: any
 }
 
-const Calendar: FC<Props> = (props) => {
+const Calendar: React.FC<Props> = (props) => {
     const { tasks, fromDate, addFromDate, updateTask, openAddTaskModal, openEditTaskModal, setDebug } = props
 
     const dragStart = (e: any, task: any, task_start_no: any, task_row_span: any) => {
@@ -60,7 +60,7 @@ const Calendar: FC<Props> = (props) => {
                 ＜
             </div>
             {
-                hours.map((hour) => <div className="flex items-center justify-end row-span-2 text-right">{`${cm.padLeftZero(hour, 2)}:00`}</div>)
+                hours.map((hour) => <div key={hour} className="flex items-center justify-end row-span-2 text-right">{`${cm.padLeftZero(hour, 2)}:00`}</div>)
             }
             {
                 cm.createNumRange(0, 6)
@@ -116,7 +116,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                 const no = lower_no + tasks2.reduce((acc, ts, idx2) => idx2 < idx ? acc + ts.length : acc, 0)
                 const start_date = lower_date.add((no - lower_no) * 30, 'm')
                 return (
-                    <div className="border border-gray-400 flex items-center justify-center focus:border-blue-500"
+                    <div key={no} className="border border-gray-400 flex items-center justify-center focus:border-blue-500"
                         onDoubleClick={() => openAddTaskModal({ id: 0, name: '', start_date, end_date: start_date.add(30, 'm') })}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => drop(e, no, start_date, 1)}
@@ -128,6 +128,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                 const task_start_no = lower_no + task.start_date.diff(lower_date, 'm') / 30
                 return (
                     <div
+                        key={task_start_no}
                         className="border border-gray-400 flex items-center justify-center bg-teal-500 cursor-pointer focus:border-blue-500"
                         draggable={true}
                         onDoubleClick={() => openEditTaskModal(task)}
@@ -171,6 +172,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                 const height = cm.getHeight(task_row_span / sg_row_span)
                 return (
                     <div
+                        key={`${task_start_no}-${x}`}
                         className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} bg-teal-500 cursor-pointer focus:border-blue-500`}
                         draggable={true}
                         onDoubleClick={() => openEditTaskModal(task)}
@@ -193,6 +195,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                         const start_date = lower_date.add((no - lower_no) * 30, 'm')
                         emptyDivs.push(
                             <div
+                                key={`${no}-${x}`}
                                 className={`absolute border border-gray-400 flex items-center justify-center ${x} ${y} ${width} ${height} focus:border-blue-500`}
                                 onDoubleClick={() => openAddTaskModal({ id: 0, name: '', start_date, end_date: start_date.add(30, 'm') })}
                                 onDragOver={(e) => e.preventDefault()}
@@ -205,7 +208,7 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
                 }
             }
             return (
-                <div className={`relative ${cm.getRowSpan(sg_row_span)}`}>
+                <div key={sg_lower_no} className={`relative ${cm.getRowSpan(sg_row_span)}`}>
                     {filledDivs}
                     {emptyDivs}
                 </div>
@@ -225,10 +228,10 @@ const createCellElements = (ymd_caption: string, allTasks: any[], dateRanges: an
     // if (setDebug) setDebug(JSON.stringify(dbg))
 
     return (
-        <>
+        <React.Fragment key={lower_no}>
             <div className="border border-gray-400 text-center">{ymd_caption}</div>
             {divs}
-        </>
+        </React.Fragment>
     )
 }
 
